@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI MIND PRO — Your AI Space</title>
+<style>
+  :root{
+    --bg:#0a0a0f; --card:#15151d; --text:#fff; --sub:#8a8a9a; 
+    --input:#1e1e2a; --ai-bg:#1c1c28; --border:#2a2a3a; --accent:#8b5cf6;
+  }
+  body.light{
+    --bg:#ffffff; --card:#f8f8fa; --text:#111; --sub:#777;
+    --input:#ffffff; --ai-bg:#f0f0f3; --border:#e8e8ec; --accent:#8b5cf6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Segoe UI', sans-serif;transition:background 0.25s,color 0.25s,border 0.25s}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;pointer-events:auto;position:relative;z-index:2}
+.top-bar,.input-wrapper,.welcome,.recent-wrap{position:relative;z-index:3}
+.premium-panel{z-index:1000}
+input,textarea{touch-action:manipulation}
+  body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0}
+  .top-bar{width:100%;max-width:800px;display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10}
+  .logo{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .logo span{background:linear-gradient(90deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .controls{display:flex;gap:8px;align-items:center}
+  .google-auth-btn{background:#fff;color:#222;border:1px solid #dadce0;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer}
+  .google-user{font-size:12px;color:var(--sub);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media(max-width:620px){.google-user{display:none}.google-auth-btn{padding:7px 9px;font-size:12px}}
+  .icon-btn{background:var(--input);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500}
+  .icon-btn:hover{border-color:var(--accent)}
+  .recent-wrap{display:none;width:100%;max-width:1200px;padding:10px 16px 0;box-sizing:border-box;margin:0 auto;}
+  .recent-wrap.show{display:block;}
+  .recent-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 12px;}
+  .recent-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:800;margin-bottom:8px;}
+  .recent-list{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px;}
+  .recent-item{flex:0 0 auto;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:var(--input);border:1px solid var(--border);color:var(--text);padding:8px 11px;border-radius:10px;font-size:12px;cursor:pointer;}
+  .recent-item.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+  .recent-empty{font-size:12px;color:var(--sub);padding:4px 0;}
+  .container{width:100%;max-width:800px;flex:1;display:flex;flex-direction:column;padding:0 16px 16px;height:calc(100vh - 65px)}
+  .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+  .welcome h1{font-size:42px;font-weight:800;margin-bottom:12px;letter-spacing:-1px}
+  .welcome h1 span{background:linear-gradient(90deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .welcome p{color:var(--sub);font-size:15px;margin-bottom:30px}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .chip{background:var(--input);border:1px solid var(--border);padding:10px 16px;border-radius:20px;font-size:13px;color:var(--sub);cursor:pointer}
+  .chip:hover{border-color:var(--accent);color:var(--text)}
+  .welcome.hidden{display:none}
+  #chatBox{flex:1;overflow-y:auto;padding:20px 4px;display:none;flex-direction:column;gap:14px}
+  #chatBox.active{display:flex}
+  .msg{padding:13px 16px;border-radius:18px;max-width:85%;line-height:1.5;font-size:14.5px;animation:pop 0.2s ease;white-space:pre-wrap;word-break:break-word}
+  @keyframes pop{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .user{align-self:flex-end;background:var(--text);color:var(--bg);border-bottom-right-radius:6px;font-weight:500}
+  body.light .user{background:#111;color:#fff}
+  .ai{align-self:flex-start;background:var(--ai-bg);border:1px solid var(--border);border-bottom-left-radius:6px;color:var(--text)}
+  .msg img, .msg video{max-width:100%;border-radius:12px;margin-top:10px;display:block;max-height:400px;object-fit:cover}
+  .gen-img{border:2px solid var(--accent);box-shadow:0 0 20px rgba(139,92,246,0.3)}
+  .img-actions{display:flex;gap:8px;margin-top:8px}
+  .img-actions button{background:var(--input);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px}
+  .img-actions button:hover{background:var(--accent);color:#fff}
+  .input-wrapper{position:relative;background:var(--input);border:1px solid var(--border);border-radius:28px;padding:8px 8px 8px 12px;display:flex;align-items:center;gap:6px;margin-top:12px}
+  .input-wrapper:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,92,246,0.15)}
+  #userInput{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:15px;padding:10px 6px;min-height:24px}
+  .icon-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:none;font-size:18px;color:var(--sub)}
+  .icon-circle:hover{background:var(--ai-bg);color:var(--text)}
+  #sendBtn{background:var(--text);color:var(--bg);width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+  #sendBtn:disabled{opacity:0.4}
+  body.light #sendBtn{background:#111;color:#fff}
+  .attach-menu{position:absolute;bottom:60px;left:10px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,0.3);display:none;flex-direction:column;gap:4px;z-index:20;min-width:200px}
+  .attach-menu.show{display:flex}
+  .attach-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;cursor:pointer;font-size:14px;color:var(--text)}
+  .attach-item:hover{background:var(--ai-bg)}
+  .attach-item span.icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+  #fileInputs{display:none}
+  .loading-dots:after{content:'...';animation:dots 1.5s steps(4,end) infinite}
+  @keyframes dots{0%,20%{content:'.'}40%{content:'..'}60%,100%{content:'...'}}
+
+  .premium-btn{background:linear-gradient(90deg,#f59e0b,#ec4899);color:#fff;border:none;box-shadow:0 0 18px rgba(236,72,153,.18)}
+  .premium-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(90deg,#f59e0b,#ec4899);color:#fff;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}
+  .premium-panel{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
+  .premium-panel.show{display:flex}
+  .premium-card{width:min(760px,100%);max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:24px;box-shadow:0 20px 70px rgba(0,0,0,.5)}
+  .premium-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+  .premium-head h2{font-size:26px}.close-premium{background:var(--input);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer}
+  .premium-hero{background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(236,72,153,.16));border:1px solid #6d3fc8;border-radius:18px;padding:18px;margin-bottom:16px}
+  .premium-hero p{color:var(--sub);margin-top:7px;font-size:13px;line-height:1.5}
+  .plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .plan{background:var(--input);border:1px solid var(--border);border-radius:16px;padding:16px}.plan.pro{border-color:#ec4899;box-shadow:0 0 20px rgba(236,72,153,.10)}
+  .plan h3{margin-bottom:5px}.plan .price{font-size:20px;font-weight:800;margin:8px 0;color:var(--text)}
+  .plan ul{list-style:none;color:var(--sub);font-size:13px;line-height:1.8;margin:10px 0 14px}.plan li::before{content:'✓ ';color:#22c55e;font-weight:800}
+  .plan button{width:100%;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--text);color:var(--bg);cursor:pointer;font-weight:700}
+  .premium-note{font-size:11px;color:var(--sub);margin-top:12px;line-height:1.5}
+  .premium-contact{background:var(--input);border:1px solid var(--border);border-radius:14px;padding:14px;margin:14px 0;font-size:13px;line-height:1.6}
+  .premium-contact a{color:#60a5fa;font-weight:700;text-decoration:none}.code-area{display:none;margin-top:14px;padding:16px;background:var(--input);border:1px solid var(--border);border-radius:16px}
+  .code-area.show{display:block}.email-request{display:none;margin-top:14px;padding:16px;background:var(--input);border:1px solid var(--border);border-radius:16px}.email-request.show{display:block}.email-request label{display:block;font-size:13px;font-weight:700;margin:10px 0 5px}.email-request input,.email-request textarea{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font:inherit}.email-request textarea{min-height:90px;resize:vertical}.email-request button,.next-plan-btn{padding:12px 16px;border:0;border-radius:11px;background:linear-gradient(90deg,#f59e0b,#ec4899);color:white;font-weight:800;cursor:pointer}.next-plan-wrap{display:none;margin-top:14px}.next-plan-wrap.show{display:block}.code-title{font-weight:800;margin-bottom:6px}.selected-plan{color:#fbbf24;font-weight:800}.code-input{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:11px;border:1px solid var(--border);background:var(--card);color:var(--text);outline:none;font-size:17px;letter-spacing:1px;margin:10px 0}.code-input:focus{border-color:#a855f7;box-shadow:0 0 0 3px rgba(168,85,247,.15)}
+  .code-row{display:flex;gap:8px}.code-row button{flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--text);color:var(--bg);font-weight:800;cursor:pointer}.code-status{font-size:12px;color:var(--sub);min-height:18px;margin-top:8px}.timer{font-weight:800;color:#f87171}
+  .active-premium{margin-bottom:14px;padding:12px 14px;border-radius:12px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.35);font-size:13px;display:none}
+  @media(max-width:620px){.top-bar{padding:14px 12px}.logo{font-size:17px}.controls{gap:5px}.icon-btn{padding:8px 9px}.plan-grid{grid-template-columns:1fr}.premium-card{padding:18px}.code-row{flex-direction:column}}
+
+
+
+/* AI MIND PRO premium shell */
+:root{--accent:#8b5cf6}
+body{overflow-x:hidden;background:radial-gradient(ellipse at 50% -20%,rgba(91,33,182,.20),transparent 55%),var(--bg)}
+.top-bar{max-width:none;padding:14px clamp(12px,3vw,28px);backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 82%,transparent);}
+.top-new-chat{border:1px solid rgba(139,92,246,.45);background:linear-gradient(120deg,rgba(109,40,217,.18),rgba(219,39,119,.13));white-space:nowrap;}
+@media(max-width:620px){.top-new-chat{font-size:11px;padding:8px 7px;}}
+.logo{position:relative}.logo:after{content:"";position:absolute;inset:-7px -12px;border-radius:18px;border:1px solid transparent;background:linear-gradient(110deg,#ef4444,#facc15,#22c55e,#3b82f6,#ef4444) border-box;mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:.7;filter:drop-shadow(0 0 7px #8b5cf6);animation:logoGlow 7s linear infinite;pointer-events:none}
+@keyframes logoGlow{to{filter:hue-rotate(360deg) drop-shadow(0 0 8px #8b5cf6)}}
+.guest-pill{font-size:11px;color:var(--sub);padding:7px 10px;border:1px solid var(--border);border-radius:999px;background:var(--card);max-width:135px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu-toggle{font-size:18px;padding:7px 11px}
+.container{max-width:900px;height:calc(100dvh - 66px);padding-bottom:max(14px,env(safe-area-inset-bottom))}
+.input-wrapper{border:1px solid transparent;background:linear-gradient(var(--input),var(--input)) padding-box,conic-gradient(from var(--glow-angle,0deg),#ef4444,#facc15,#22c55e,#3b82f6,#ef4444) border-box;box-shadow:0 0 22px rgba(139,92,246,.10);animation:borderSpin 8s linear infinite}
+@property --glow-angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+@keyframes borderSpin{to{--glow-angle:360deg}}
+.voice-btn{width:38px;height:38px;border-radius:50%;border:1px solid rgba(139,92,246,.5);background:radial-gradient(circle at 35% 30%,#a78bfa,#4c1d95);color:white;font-size:17px;cursor:pointer;box-shadow:0 0 15px #8b5cf666;flex:0 0 auto}
+.voice-btn.listening{animation:voicePulse 1s infinite;box-shadow:0 0 0 7px #ef444433,0 0 25px #ef4444}
+@keyframes voicePulse{50%{transform:scale(1.12);filter:hue-rotate(80deg)}}
+.sidebar-scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:1001;opacity:0;visibility:hidden;transition:.25s}
+.sidebar-scrim.open{opacity:1;visibility:visible}
+.app-sidebar{position:fixed;z-index:1002;inset:0 auto 0 0;width:min(310px,86vw);padding:18px 14px;background:var(--card);border-right:1px solid var(--border);box-shadow:18px 0 55px #0004;transform:translateX(-105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:14px}
+.app-sidebar.open{transform:translateX(0)}
+.side-brand{display:flex;align-items:center;gap:9px;padding:4px 4px 18px;border-bottom:1px solid var(--border);font-size:17px}.side-brand b{background:linear-gradient(90deg,#a78bfa,#ec4899,#f59e0b);background-clip:text;color:transparent}.side-brand button{margin-left:auto;border:0;background:var(--input);color:var(--text);border-radius:9px;width:32px;height:32px;font-size:22px}
+.side-action{width:100%;text-align:left;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input);color:var(--text);font-size:15px;cursor:pointer}.side-action.primary{background:linear-gradient(110deg,#6d28d9,#9333ea,#db2777);border:0;color:white;font-weight:700;box-shadow:0 8px 25px #7c3aed33}
+.side-section-title{font-size:10px;letter-spacing:1.5px;color:var(--sub);font-weight:800;padding:8px 5px 0}
+.side-history{overflow:auto;display:flex;flex-direction:column;gap:6px;min-height:70px}.side-history .recent-item{width:100%;max-width:none;text-align:left;border-radius:12px;padding:10px 11px;display:flex;flex-direction:column;gap:5px;white-space:normal;max-width:none}.history-title{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.history-preview{font-size:11px;line-height:1.35;color:var(--sub);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:400}.history-date{font-size:10px;color:var(--sub);opacity:.8}.side-empty{font-size:12px;color:var(--sub);padding:10px 5px}
+.side-footer{margin-top:auto;border-top:1px solid var(--border);padding:14px 5px 4px;display:flex;align-items:center;gap:8px;color:var(--sub);font-size:12px}.guest-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 9px #22c55e}
+.recent-wrap{display:none!important}
+.welcome h1{font-size:clamp(34px,7vw,54px);text-shadow:0 0 30px #8b5cf655}.welcome p{max-width:420px;line-height:1.6}
+body.light{background:radial-gradient(ellipse at 50% -20%,rgba(139,92,246,.13),transparent 55%),var(--bg)}
+@media(max-width:620px){.top-bar{padding:12px 10px}.guest-pill{max-width:105px;font-size:10px}.controls{gap:5px}.container{height:calc(100dvh - 58px);padding-left:10px;padding-right:10px}.input-wrapper{gap:4px}.voice-btn{width:36px;height:36px}}
+
+/* ===== AI MIND PRO: refined premium visual system ===== */
+:root{--accent:#8b5cf6;--accent2:#ec4899;--panel:rgba(21,22,34,.78);--line:rgba(148,163,184,.16);--soft-shadow:0 24px 70px rgba(0,0,0,.28)}
+*{scrollbar-width:thin;scrollbar-color:rgba(139,92,246,.45) transparent}
+body{min-height:100dvh;background:radial-gradient(ellipse at 50% -18%,rgba(124,58,237,.23),transparent 42%),radial-gradient(ellipse at 100% 60%,rgba(14,165,233,.07),transparent 35%),var(--bg);}
+.top-bar{max-width:none;min-height:72px;padding:12px clamp(14px,4vw,54px);border-bottom:1px solid var(--line);box-shadow:0 8px 32px rgba(0,0,0,.10);}
+.logo{font-size:21px;letter-spacing:-.65px;font-weight:900;gap:10px}
+.logo>span:first-of-type{background:linear-gradient(100deg,#c4b5fd 0%,#a78bfa 30%,#f0abfc 65%,#f9a8d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo:after{inset:-8px -14px;border-radius:15px;opacity:.42}
+.controls{gap:9px}
+.icon-btn{border-radius:12px;padding:9px 13px;font-weight:700;letter-spacing:.05px;backdrop-filter:blur(12px);box-shadow:0 3px 12px rgba(0,0,0,.08)}
+.premium-btn{background:linear-gradient(115deg,#b7791f,#e7a928 45%,#d97706);box-shadow:0 6px 22px rgba(217,119,6,.22);color:#fff}
+.top-new-chat{background:linear-gradient(120deg,rgba(124,58,237,.22),rgba(219,39,119,.16));border-color:rgba(167,139,250,.42);}
+.guest-pill{background:rgba(148,163,184,.08);border-color:var(--line);font-weight:650}
+.container{max-width:980px;width:min(100%,980px);height:calc(100dvh - 72px);padding:0 clamp(14px,3vw,28px) max(20px,env(safe-area-inset-bottom));}
+.welcome{position:relative;isolation:isolate;border:1px solid rgba(167,139,250,.15);border-radius:30px;margin:clamp(22px,5vh,52px) 0 20px;padding:clamp(28px,6vw,58px) 20px;background:linear-gradient(145deg,rgba(139,92,246,.085),rgba(236,72,153,.035) 48%,rgba(14,165,233,.045));box-shadow:inset 0 1px rgba(255,255,255,.07),0 20px 60px rgba(0,0,0,.12);overflow:hidden}
+.welcome:before{content:"";position:absolute;z-index:-1;width:300px;height:300px;border-radius:50%;background:rgba(139,92,246,.14);filter:blur(75px);top:-190px;left:calc(50% - 150px)}
+.welcome h1{font-size:clamp(38px,7vw,64px);line-height:1.05;letter-spacing:-2.5px;margin-bottom:14px;text-shadow:0 8px 35px rgba(139,92,246,.24)}
+.welcome p{font-size:clamp(14px,2vw,16px);color:var(--sub);margin-bottom:26px;max-width:480px}
+.credit-pill{border:1px solid rgba(167,139,250,.22);background:rgba(139,92,246,.10);border-radius:999px;padding:8px 14px;margin:0 0 24px;font-size:12px;color:var(--text);}
+.chips{width:min(100%,660px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.chip{min-height:62px;display:flex;align-items:center;justify-content:flex-start;text-align:left;border-radius:16px;padding:14px 16px;background:linear-gradient(145deg,rgba(148,163,184,.10),rgba(148,163,184,.035));border:1px solid var(--line);color:var(--text);font-weight:650;box-shadow:inset 0 1px rgba(255,255,255,.035);transition:transform .2s,border-color .2s,background .2s}
+.chip:hover{transform:translateY(-3px);border-color:rgba(167,139,250,.55);background:rgba(139,92,246,.13)}
+#chatBox{gap:18px;padding:24px 8px;scroll-behavior:smooth}
+.msg{font-size:15px;line-height:1.65;padding:15px 18px;border-radius:20px;max-width:min(84%,720px);box-shadow:0 5px 18px rgba(0,0,0,.08)}
+.user{background:linear-gradient(130deg,#7652d6,#8b5cf6 55%,#a855f7);color:white;border:0;border-bottom-right-radius:7px}
+.ai{background:rgba(148,163,184,.075);border:1px solid var(--line);border-bottom-left-radius:7px;backdrop-filter:blur(12px)}
+.input-wrapper{margin-top:12px;min-height:64px;padding:9px 10px 9px 13px;border-radius:22px;background:linear-gradient(var(--input),var(--input)) padding-box,conic-gradient(from var(--glow-angle,0deg),#ef4444,#facc15,#22c55e,#3b82f6,#ef4444) border-box;box-shadow:0 12px 38px rgba(0,0,0,.18),0 0 28px rgba(139,92,246,.10)}
+#userInput{font-size:15px;padding:12px 8px;min-width:0}
+#sendBtn{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);box-shadow:0 5px 16px rgba(124,58,237,.32);font-size:22px}
+.voice-btn{width:42px;height:42px;background:linear-gradient(145deg,#8b5cf6,#4c1d95);border:1px solid rgba(196,181,253,.42);box-shadow:0 0 0 4px rgba(139,92,246,.09),0 5px 20px rgba(139,92,246,.28)}
+.app-sidebar{background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(24px);border-right:1px solid var(--line);box-shadow:25px 0 80px rgba(0,0,0,.35)}
+.side-brand{font-size:18px;padding:8px 4px 20px}
+.side-action{border-radius:14px;padding:14px 15px;font-weight:700}
+.side-history .recent-item{border-radius:12px}
+.premium-card{box-shadow:0 30px 100px rgba(0,0,0,.45);backdrop-filter:blur(20px)}
+body.light{--line:rgba(71,85,105,.14);background:radial-gradient(ellipse at 50% -18%,rgba(139,92,246,.12),transparent 43%),#f5f6fb}
+body.light .top-bar{background:rgba(255,255,255,.82);border-color:rgba(71,85,105,.12)}
+body.light .welcome{background:linear-gradient(145deg,rgba(139,92,246,.07),rgba(236,72,153,.035),rgba(14,165,233,.04));border-color:rgba(139,92,246,.15);box-shadow:0 20px 60px rgba(30,41,59,.07)}
+body.light .chip{background:rgba(255,255,255,.78);border-color:rgba(71,85,105,.13);box-shadow:0 5px 18px rgba(30,41,59,.04)}
+body.light .ai{background:rgba(255,255,255,.88);border-color:rgba(71,85,105,.12)}
+body.light .input-wrapper{box-shadow:0 10px 32px rgba(30,41,59,.10),0 0 20px rgba(139,92,246,.08)}
+@media(max-width:620px){
+ .top-bar{min-height:60px;padding:10px 9px;gap:6px}.logo{font-size:15px;gap:5px}.logo:after{inset:-5px -7px}.controls{gap:4px}.guest-pill{display:none}.icon-btn{padding:8px 8px;font-size:11px;border-radius:10px}.menu-toggle{font-size:16px;padding:7px 9px}.container{height:calc(100dvh - 60px);padding-left:10px;padding-right:10px}.welcome{margin:18px 0 12px;padding:32px 14px;border-radius:24px}.welcome h1{letter-spacing:-1.5px}.welcome p{font-size:13px;margin-bottom:20px}.chips{gap:8px}.chip{min-height:58px;padding:11px 12px;font-size:12px;border-radius:13px}.msg{max-width:92%;font-size:14px;padding:13px 15px}.input-wrapper{min-height:58px;border-radius:19px;padding:7px}.voice-btn{width:37px;height:37px}#sendBtn{width:38px;height:38px;border-radius:12px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+
+
+/* ===== STYLE 4: NEON FUTURISTIC / MULTI-COLOUR GLOW / FUTURISTIC TYPE ===== */
+:root{
+  --accent:#22d3ee; --accent2:#f472b6;
+  --line:rgba(34,211,238,.22);
+  --soft-shadow:0 24px 80px rgba(0,0,0,.38);
+}
+body{
+  font-family:'Rajdhani','Orbitron','Segoe UI',sans-serif;
+  background:
+    radial-gradient(ellipse at 12% 12%,rgba(239,68,68,.13),transparent 30%),
+    radial-gradient(ellipse at 88% 16%,rgba(59,130,246,.16),transparent 32%),
+    radial-gradient(ellipse at 52% 100%,rgba(34,197,94,.10),transparent 38%),
+    #070912;
+}
+body *{font-family:'Rajdhani','Orbitron','Segoe UI',sans-serif;}
+.top-bar{
+  background:rgba(7,9,18,.82);backdrop-filter:blur(22px);
+  border-bottom:1px solid rgba(34,211,238,.22);
+  box-shadow:0 8px 36px rgba(0,0,0,.28),0 1px 18px rgba(34,211,238,.07);
+}
+.logo>span:first-of-type,.side-brand b{
+  background:linear-gradient(100deg,#ef4444,#facc15 28%,#22c55e 55%,#38bdf8 78%,#c084fc);
+  background-size:220% 220%;animation:neonGradient 8s ease infinite;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+@keyframes neonGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.icon-btn,.side-action,.chip,.recent-item{
+  border-color:rgba(56,189,248,.22);
+  box-shadow:inset 0 1px rgba(255,255,255,.035);
+}
+.icon-btn:hover,.chip:hover,.recent-item:hover{
+  border-color:#22d3ee;box-shadow:0 0 0 1px rgba(34,211,238,.2),0 0 22px rgba(34,211,238,.14);
+}
+.premium-btn{background:linear-gradient(110deg,#f59e0b,#ec4899);box-shadow:0 0 20px rgba(236,72,153,.24)}
+.top-new-chat{background:linear-gradient(110deg,rgba(34,211,238,.15),rgba(168,85,247,.18));border-color:rgba(34,211,238,.42)}
+.welcome{
+  border:1px solid rgba(34,211,238,.22);
+  background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(250,204,21,.045),rgba(34,197,94,.055),rgba(59,130,246,.09),rgba(168,85,247,.07));
+  box-shadow:inset 0 1px rgba(255,255,255,.06),0 0 35px rgba(34,211,238,.07),var(--soft-shadow);
+}
+.welcome:before{background:conic-gradient(from 0deg,rgba(239,68,68,.22),rgba(250,204,21,.18),rgba(34,197,94,.2),rgba(59,130,246,.22),rgba(168,85,247,.2));filter:blur(85px);animation:auroraDrift 13s ease-in-out infinite alternate}
+@keyframes auroraDrift{from{transform:translateX(-35px) rotate(0deg)}to{transform:translateX(35px) rotate(35deg)}}
+.welcome h1 span{background:linear-gradient(100deg,#f87171,#facc15,#4ade80,#38bdf8,#c084fc);background-size:250% 250%;animation:neonGradient 9s ease infinite;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.chip{background:linear-gradient(135deg,rgba(15,23,42,.72),rgba(30,41,59,.4));border-color:rgba(56,189,248,.2)}
+.msg{font-weight:550;letter-spacing:.08px}
+.user{background:linear-gradient(115deg,#7c3aed,#2563eb,#0891b2);box-shadow:0 0 22px rgba(59,130,246,.16)}
+.ai{background:linear-gradient(135deg,rgba(15,23,42,.88),rgba(30,41,59,.66));border:1px solid rgba(34,211,238,.18);box-shadow:0 0 20px rgba(34,211,238,.045)}
+.input-wrapper{
+  background:linear-gradient(#0c1220,#0c1220) padding-box,
+  conic-gradient(from var(--glow-angle,0deg),#ef4444,#facc15,#22c55e,#38bdf8,#a855f7,#ec4899,#ef4444) border-box;
+  box-shadow:0 0 0 1px rgba(34,211,238,.08),0 10px 38px rgba(0,0,0,.34),0 0 28px rgba(56,189,248,.12);
+}
+.input-wrapper:focus-within{box-shadow:0 0 0 2px rgba(34,211,238,.16),0 0 28px rgba(34,211,238,.18)}
+#sendBtn{background:linear-gradient(135deg,#06b6d4,#2563eb,#9333ea);box-shadow:0 0 18px rgba(34,211,238,.24)}
+.voice-btn{background:linear-gradient(135deg,#ef4444,#9333ea,#2563eb);border-color:rgba(56,189,248,.5);box-shadow:0 0 18px rgba(168,85,247,.35)}
+.app-sidebar{background:rgba(7,12,25,.94);border-right:1px solid rgba(34,211,238,.25);backdrop-filter:blur(26px)}
+.side-action.primary{background:linear-gradient(110deg,#7c3aed,#2563eb,#0891b2);box-shadow:0 0 22px rgba(59,130,246,.2)}
+.premium-card{border-color:rgba(34,211,238,.24)}
+body.light{
+  --line:rgba(71,85,105,.18);
+  background:radial-gradient(ellipse at 10% 8%,rgba(239,68,68,.09),transparent 30%),radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.10),transparent 32%),radial-gradient(ellipse at 50% 100%,rgba(34,197,94,.07),transparent 38%),#f4f7fc;
+}
+body.light .top-bar{background:rgba(248,250,255,.88);border-color:rgba(37,99,235,.16)}
+body.light .welcome{background:linear-gradient(135deg,rgba(239,68,68,.045),rgba(250,204,21,.04),rgba(34,197,94,.05),rgba(59,130,246,.07),rgba(168,85,247,.05));border-color:rgba(37,99,235,.18)}
+body.light .welcome:before{opacity:.48}
+body.light .chip{background:rgba(255,255,255,.86);border-color:rgba(37,99,235,.15);color:#263449}
+body.light .ai{background:rgba(255,255,255,.9);border-color:rgba(37,99,235,.15);color:#172033}
+body.light .input-wrapper{background:linear-gradient(#fff,#fff) padding-box,conic-gradient(from var(--glow-angle,0deg),#ef4444,#facc15,#22c55e,#38bdf8,#a855f7,#ec4899,#ef4444) border-box;box-shadow:0 10px 30px rgba(30,41,59,.10),0 0 18px rgba(59,130,246,.08)}
+body.light .app-sidebar{background:rgba(248,250,255,.96);border-color:rgba(37,99,235,.17)}
+body.light .side-action{background:rgba(255,255,255,.9)}
+@media(max-width:620px){.top-bar{backdrop-filter:blur(18px)}.welcome{border-radius:24px}.input-wrapper{box-shadow:0 0 0 1px rgba(34,211,238,.08),0 8px 26px rgba(0,0,0,.24)}}
+
+
+/* Guest sign-in gate and profile menu */
+.guest-pill{display:none!important}
+.profile-wrap{position:relative;display:flex;align-items:center}
+.profile-avatar{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:linear-gradient(135deg,#ef4444,#eab308,#22c55e,#3b82f6,#a855f7);padding:2px;color:#fff;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 0 18px rgba(59,130,246,.35)}
+.profile-avatar span{display:flex;width:100%;height:100%;align-items:center;justify-content:center;border-radius:50%;background:#101827;color:#fff}
+.profile-menu{display:none;position:absolute;right:0;top:47px;z-index:1500;min-width:190px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:0 16px 45px #0008}
+.profile-menu.open{display:block}.profile-name{font-weight:800;margin:2px 4px 10px;overflow-wrap:anywhere}.profile-logout{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--input);color:var(--text);font-weight:700;text-align:left;cursor:pointer}
+.login-gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at 50% 20%,rgba(59,130,246,.2),transparent 40%),linear-gradient(135deg,#050816,#101126 55%,#080b18);color:#fff}
+.login-gate.hidden{display:none}.login-card{width:min(420px,100%);padding:30px 24px;border:1px solid rgba(125,211,252,.25);border-radius:26px;background:rgba(12,18,36,.86);backdrop-filter:blur(24px);box-shadow:0 0 55px rgba(34,211,238,.12),0 25px 80px #0008;text-align:center}
+.login-mark{width:76px;height:76px;margin:0 auto 17px;border-radius:50%;display:grid;place-items:center;font-size:34px;background:conic-gradient(#ef4444,#eab308,#22c55e,#3b82f6,#a855f7,#ef4444);box-shadow:0 0 35px rgba(59,130,246,.35);animation:orbFloat 4s ease-in-out infinite}
+.login-card h1{font-size:27px;letter-spacing:1px;margin-bottom:8px}.login-card h1 span{background:linear-gradient(90deg,#f87171,#facc15,#4ade80,#38bdf8,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent}.login-card p{color:#aab5ca;font-size:13px;line-height:1.6;margin-bottom:22px}
+.login-main-btn,.login-continue{width:100%;padding:14px;border:0;border-radius:13px;background:linear-gradient(100deg,#2563eb,#7c3aed,#db2777);color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 25px rgba(59,130,246,.25)}
+.login-name-step{display:none;text-align:left}.login-name-step.show{display:block}.login-name-step label{display:block;font-size:13px;font-weight:700;margin:0 0 8px}.login-name-step input{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(148,163,184,.35);background:#0a1020;color:#fff;font-size:16px;outline:none;margin-bottom:13px}.login-name-step input:focus{border-color:#38bdf8;box-shadow:0 0 0 3px #38bdf822}.login-error{min-height:18px;color:#fca5a5;font-size:12px;margin:0 0 8px}
+body.auth-locked{overflow:hidden}body.auth-locked>.top-bar,body.auth-locked>.container,body.auth-locked>.app-sidebar,body.auth-locked>.sidebar-scrim,body.auth-locked>.recent-wrap{visibility:hidden}
+@media(max-width:620px){.profile-avatar{width:34px;height:34px}.login-card{padding:26px 20px}}
+
+
+/* Complete futuristic dashboard: neon cyber style + rainbow flow + selected orb blend */
+body{position:relative;isolation:isolate;background:#050711;}
+body:before{content:"";position:fixed;inset:-30%;z-index:-2;pointer-events:none;background:conic-gradient(from 0deg,rgba(239,68,68,.12),rgba(250,204,21,.12),rgba(34,197,94,.13),rgba(59,130,246,.16),rgba(168,85,247,.15),rgba(236,72,153,.12),rgba(239,68,68,.12));filter:blur(95px);animation:rainbowFlow 22s linear infinite}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.15) .7px,transparent .7px);background-size:34px 34px;opacity:.13;mask-image:linear-gradient(to bottom,black,transparent 90%)}
+@keyframes rainbowFlow{to{transform:rotate(360deg) scale(1.08)}}
+body.light{background:#f5f7ff}body.light:before{opacity:.42}body.light:after{opacity:.06}
+.container{max-width:980px}
+.welcome{min-height:calc(100vh - 150px);justify-content:flex-start;gap:14px;padding:clamp(20px,4vh,42px) clamp(12px,3vw,30px);background:linear-gradient(145deg,rgba(9,14,31,.88),rgba(18,12,35,.72));border:1px solid rgba(125,211,252,.19);box-shadow:0 25px 90px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.07)}
+body.light .welcome{background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(244,247,255,.91));}
+.dashboard-greeting{width:100%;text-align:left;max-width:720px;margin:0 auto}.greeting-kicker{font-size:10px;letter-spacing:3px;color:#8eeaff;font-weight:800}.dashboard-greeting h1{font-size:clamp(27px,5vw,43px);margin:7px 0 5px;letter-spacing:-1px}.dashboard-greeting h1 span{background:linear-gradient(90deg,#f87171,#facc15,#4ade80,#38bdf8,#c084fc);background-size:250% 250%;animation:neonGradient 7s ease infinite;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.dashboard-greeting p{margin:0;color:var(--sub);font-size:14px}
+.ai-orb-stage{height:clamp(190px,30vh,270px);width:min(100%,540px);position:relative;display:grid;place-items:center;margin:0 auto 2px;isolation:isolate}
+.orb-aura{position:absolute;width:230px;height:150px;border-radius:50%;background:conic-gradient(#ef4444,#facc15,#22c55e,#38bdf8,#a855f7,#ec4899,#ef4444);filter:blur(42px);opacity:.5;animation:orbHue 8s linear infinite}
+.ai-orb{width:clamp(112px,22vw,164px);height:clamp(112px,22vw,164px);border-radius:50%;padding:9px;background:linear-gradient(145deg,#f8fafc,#475569 24%,#0b1023 48%,#64748b 70%,#080b18);box-shadow:inset -10px -12px 24px #000b,inset 7px 7px 17px #ffffff55,0 0 24px #38bdf866,0 0 60px #a855f766;animation:orbFloat 4.2s ease-in-out infinite,orbHue 12s linear infinite;z-index:2}
+.orb-core{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 28%,#263d69,#080d1d 58%,#02040a);border:2px solid rgba(125,211,252,.7);box-shadow:inset 0 0 24px #38bdf855,0 0 24px #38bdf866}
+.orb-wave{height:46px;display:flex;align-items:center;gap:4px}.orb-wave i{display:block;width:3px;height:var(--h,18px);border-radius:9px;background:linear-gradient(#fff,#38bdf8,#a855f7);box-shadow:0 0 9px #38bdf8;animation:waveDance .8s ease-in-out infinite alternate}.orb-wave i:nth-child(2n){animation-delay:.2s}.orb-wave i:nth-child(3n){animation-delay:.4s}.orb-wave i:nth-child(1){--h:13px}.orb-wave i:nth-child(2){--h:28px}.orb-wave i:nth-child(3){--h:40px}.orb-wave i:nth-child(4){--h:22px}.orb-wave i:nth-child(5){--h:48px}.orb-wave i:nth-child(6){--h:26px}.orb-wave i:nth-child(7){--h:38px}.orb-wave i:nth-child(8){--h:20px}.orb-wave i:nth-child(9){--h:12px}
+.orb-ring{position:absolute;border:1px solid rgba(125,211,252,.55);border-radius:50%;width:210px;height:72px;transform:rotate(-17deg);box-shadow:0 0 15px #a855f755;animation:ringOrbit 9s linear infinite}.ring-two{width:240px;height:90px;transform:rotate(22deg);border-color:rgba(236,72,153,.55);animation-direction:reverse;animation-duration:12s}.orb-platform{position:absolute;bottom:18px;width:230px;height:22px;border-radius:50%;background:linear-gradient(90deg,#ef4444,#facc15,#22c55e,#38bdf8,#a855f7);filter:blur(2px);box-shadow:0 0 22px #8b5cf6;opacity:.7}.orb-caption{position:absolute;bottom:0;font-size:9px;letter-spacing:3px;font-weight:900;color:#cbd5e1}.orb-caption span{color:#4ade80;letter-spacing:1px;margin-left:8px}
+@keyframes waveDance{to{transform:scaleY(.35);opacity:.55}}@keyframes ringOrbit{to{transform:rotate(343deg)}}@keyframes orbHue{to{filter:hue-rotate(360deg)}}
+.dashboard-prompt{width:100%;max-width:720px;margin:0 auto;padding:14px;border:1px solid rgba(148,163,184,.23);border-radius:20px;background:rgba(7,12,25,.58);backdrop-filter:blur(18px);box-shadow:0 0 30px rgba(59,130,246,.08)}body.light .dashboard-prompt{background:rgba(255,255,255,.76)}.prompt-label{text-align:left;color:var(--sub);font-size:12px;margin:0 0 11px 3px}
+.dashboard-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dash-card{min-height:105px;text-align:left;padding:13px;border-radius:15px;border:1px solid rgba(148,163,184,.23);background:linear-gradient(145deg,rgba(30,41,59,.78),rgba(15,23,42,.64));color:var(--text);display:flex;flex-direction:column;align-items:flex-start;gap:7px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}.dash-card:hover{transform:translateY(-3px);border-color:#a855f7;box-shadow:0 0 22px #8b5cf644}.dash-icon{font-size:22px;color:#a5f3fc;text-shadow:0 0 13px #38bdf8}.dash-card b{font-size:13px}.dash-card small{font-size:10px;line-height:1.4;color:#aab5ca;font-weight:400}body.light .dash-card{background:linear-gradient(145deg,#fff,#f1f5ff);color:#111827}body.light .dash-card small{color:#64748b}
+.input-wrapper{border:1px solid transparent;background:linear-gradient(var(--input),var(--input)) padding-box,conic-gradient(from var(--rainbow-angle,0deg),#ef4444,#facc15,#22c55e,#38bdf8,#a855f7,#ec4899,#ef4444) border-box;box-shadow:0 0 20px rgba(139,92,246,.13);animation:borderGlow 8s linear infinite}.input-wrapper:focus-within{box-shadow:0 0 0 2px rgba(56,189,248,.15),0 0 28px rgba(168,85,247,.22)}@keyframes borderGlow{to{--rainbow-angle:360deg}}
+@property --rainbow-angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+@media(max-width:620px){.dashboard-actions{grid-template-columns:1fr}.dash-card{min-height:75px;display:grid;grid-template-columns:36px 1fr;grid-template-rows:auto auto;align-items:center}.dash-icon{grid-row:1/3}.dash-card b,.dash-card small{grid-column:2}.ai-orb-stage{height:210px}.welcome{min-height:auto}.orb-ring{width:170px}.ring-two{width:195px}}
+@media(prefers-reduced-motion:reduce){body:before,.ai-orb,.orb-aura,.orb-ring,.orb-wave i,.input-wrapper,.dashboard-greeting h1 span{animation:none!important}}
+
+</style>
+</head>
+<body class="auth-locked">
+
+<div class="login-gate" id="loginGate">
+  <div class="login-card">
+    <div class="login-mark">🧠</div>
+    <h1><span>SHAHIL AI PRO</span></h1>
+    <p>Your personal AI space. Continue as a guest to start chatting, creating and exploring.</p>
+    <button id="googleBtnCustom" type="button" onclick="openGoogleModal(); return false;">
+      <svg viewBox="0 0 48 48" style="width:18px;height:18px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div style="display:flex;align-items:center;gap:10px;margin:0 0 12px;opacity:.5"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:11px;color:var(--sub)">OR</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
+    <button class="login-main-btn" id="guestLoginStart">Continue with Guest</button>
+    <div class="login-name-step" id="guestNameStep">
+      <label for="guestNameInput">Enter your name</label>
+      <input id="guestNameInput" maxlength="32" autocomplete="name" placeholder="e.g. Shahil" />
+      <div class="login-error" id="guestLoginError"></div>
+      <button class="login-continue" id="guestLoginContinue">Login →</button>
+    </div>
+  </div>
+</div>
+
+<div class="top-bar">
+  <div class="logo">🧠 <span>AI MIND PRO</span><span id="premiumCrown" title="Premium active" style="display:none;margin-left:7px;font-size:22px;vertical-align:middle">👑</span></div>
+  <div class="controls">
+    <span class="guest-pill" id="guestBadge">Guest ID: …</span>
+    <div class="profile-wrap" id="profileWrap"><button class="profile-avatar" id="profileAvatar" aria-label="Account menu"><span id="profileInitial">G</span></button><div class="profile-menu" id="profileMenu"><div class="profile-name" id="profileName">Guest</div><button class="profile-logout" id="logoutBtn">↪ Log out</button></div></div>
+    <button class="icon-btn premium-btn" id="premiumBtn">👑 Premium</button>
+    <button class="icon-btn" id="themeBtn" aria-label="Switch theme">☀️ Light</button>
+    <button class="icon-btn top-new-chat" id="topNewChat" aria-label="Start a new chat">＋ New Chat</button>
+    <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+  </div>
+</div>
+
+
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+<aside class="app-sidebar" id="appSidebar" aria-label="Main menu">
+  <div class="side-brand"><span>🧠</span><b>AI MIND PRO</b><button id="closeSidebar" aria-label="Close menu">×</button></div>
+  <button class="side-action primary" id="sideNewChat">＋ <span>New Chat</span></button>
+  <div class="side-section-title">CHAT HISTORY</div>
+  <div class="side-history" id="sideHistory"><div class="side-empty">Your chats will appear here.</div></div>
+  <div class="side-footer"> <span class="guest-dot"></span><span id="sideGuestId">Guest</span></div>
+</aside>
+
+<div class="container">
+  <div class="welcome" id="welcome">
+    <div class="dashboard-greeting"><span class="greeting-kicker">YOUR PERSONAL AI SPACE</span><h1 id="smartGreeting">Good evening, <span>Guest</span></h1><p>What would you like to create today?</p></div>
+    <div class="ai-orb-stage" aria-label="Animated AI Mind Pro orb">
+      <div class="orb-aura"></div><div class="orb-ring ring-one"></div><div class="orb-ring ring-two"></div>
+      <div class="ai-orb"><div class="orb-core"><div class="orb-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
+      <div class="orb-platform"></div><div class="orb-caption">AI MIND PRO <span>● ONLINE</span></div>
+    </div>
+    <div class="dashboard-prompt">
+      <div class="prompt-label">✦ Ask anything, create anything</div>
+      <div class="dashboard-actions">
+        <button type="button" class="dash-card" id="dashChat"><span class="dash-icon">✧</span><b>AI Chat</b><small>Ask questions and explore ideas</small></button>
+        <button type="button" class="dash-card" id="dashVoice"><span class="dash-icon">◖)))</span><b>Voice Conversation</b><small>Talk naturally with your AI</small></button>
+        <button type="button" class="dash-card" id="dashImage"><span class="dash-icon">✺</span><b>Image Generator</b><small>Turn your ideas into images</small></button>
+      </div>
+    </div>
+    <div class="credit-pill">💎 Image Credits: <b id="creditDisplay">10</b></div>
+    <div class="chips">
+      <div class="chip" data-type="text" data-prompt="Explain black holes">Black Holes</div>
+      <div class="chip" data-type="image" data-prompt="A futuristic city at night, cyberpunk style">🎨 Cyberpunk City</div>
+      <div class="chip" data-type="image" data-prompt="Cute cat astronaut in space, 3d render">🎨 Cat Astronaut</div>
+      <div class="chip" data-type="text" data-prompt="Write a poem">Write Poem</div>
+    </div>
+  </div>
+
+  <div id="chatBox"></div>
+
+  <div class="input-wrapper">
+    <div class="attach-menu" id="attachMenu">
+      <div class="attach-item" data-type="image"><span class="icon" style="background:#a855f720;color:#a855f7">🖼️</span> Photo Upload (AI ko dikhao)</div>
+      <div class="attach-item" data-type="gen"><span class="icon" style="background:#ec489920;color:#ec4899">🎨</span> Generate AI Image</div>
+      <div class="attach-item" data-type="video"><span class="icon" style="background:#3b82f620;color:#3b82f6">🎥</span> Video Upload</div>
+      <div class="attach-item" data-type="camera"><span class="icon" style="background:#f59e0b20;color:#f59e0b">📷</span> Camera</div>
+      <div class="attach-item" data-type="file"><span class="icon" style="background:#10b98120;color:#10b981">📄</span> File</div>
+    </div>
+
+    <button class="icon-circle" id="attachBtn">📎</button>
+    <input id="userInput" type="text" inputmode="text" enterkeyhint="send" placeholder="Ask or type 'image: cat' to generate image..." autocomplete="off" />
+    <button class="voice-btn" id="voiceBtn" type="button" aria-label="Start voice conversation" title="Voice Conversation">🎙️</button>
+    <button id="sendBtn">↑</button>
+  </div>
+</div>
+
+
+<div class="premium-panel" id="premiumPanel">
+  <div class="premium-card">
+    <div class="premium-head">
+      <div><span class="premium-badge">👑 AI MIND PRO+</span><h2 style="margin-top:8px">Get Premium</h2></div>
+      <button class="close-premium" id="closePremium">×</button>
+    </div>
+    <div class="premium-hero">
+      <b>Choose your Premium package</b>
+      <p>Payment amount is not shown here. First choose a package, then contact the Premium Gmail below and enter the code you receive.</p>
+    </div>
+    <div class="active-premium" id="activePremiumBox"></div>
+    <div class="premium-contact">
+      📧 <b>Premium request Gmail:</b><br>
+      <span style="color:#60a5fa;font-weight:800">sr3815729@gmail.com</span><br>
+      <span style="color:var(--sub)">Pehle package select karo, phir Next dabakar email form bharo.</span>
+    </div>
+    <div class="plan-grid">
+      <div class="plan pro"><h3>24 Hours Premium</h3><div class="price">24 Hours</div><ul><li>Premium tools</li><li>Unlimited AI image generation</li><li>Premium access for 24 hours</li></ul><button onclick="selectPremiumPlan('24h', this)">Select 24 Hours</button></div>
+      <div class="plan pro"><h3>51 Hours Premium</h3><div class="price">51 Hours</div><ul><li>Premium tools</li><li>Unlimited AI image generation</li><li>Premium access for 51 hours</li></ul><button onclick="selectPremiumPlan('51h', this)">Select 51 Hours</button></div>
+      <div class="plan pro"><h3>1 Month Premium</h3><div class="price">1 Month</div><ul><li>Premium tools</li><li>Unlimited AI image generation</li><li>Premium access for 1 month</li></ul><button onclick="selectPremiumPlan('1m', this)">Select 1 Month</button></div>
+      <div class="plan pro"><h3>99 Days Premium</h3><div class="price">99 Days</div><ul><li>Premium tools</li><li>Unlimited AI image generation</li><li>Premium access for 99 days</li></ul><button onclick="selectPremiumPlan('99d', this)">Select 99 Days</button></div>
+      <div class="plan pro"><h3>5 Months Premium</h3><div class="price">5 Months</div><ul><li>Premium tools</li><li>Unlimited AI image generation</li><li>Premium access for 5 months</li></ul><button onclick="selectPremiumPlan('5m', this)">Select 5 Months</button></div>
+      <div class="plan pro"><h3>111 Days Premium</h3><div class="price">111 Days</div><ul><li>Premium tools</li><li>Unlimited AI image generation</li><li>Premium access for 111 days</li></ul><button onclick="selectPremiumPlan('111d', this)">Select 111 Days</button></div>
+      <div class="plan pro"><h3>1 Year Premium</h3><div class="price">1 Year</div><ul><li>Premium tools</li><li>Unlimited AI image generation</li><li>Premium access for 1 year</li></ul><button onclick="selectPremiumPlan('1y', this)">Select 1 Year</button></div>
+    </div>
+    <div class="next-plan-wrap" id="nextPlanWrap">
+      <p style="font-weight:800;margin:4px 0 10px">Choose what you want to do:</p>
+      <div class="code-row">
+        <button type="button" onclick="showCodeEntry()">1. Enter your code here</button>
+        <button type="button" onclick="showPremiumEmailForm()">2. Send and ask for a code</button>
+      </div>
+    </div>
+    <div class="email-request" id="premiumEmailForm">
+      <b>📧 Send Premium Request</b>
+      <p id="emailPlanPrompt" style="color:var(--sub);font-size:13px;line-height:1.5;margin-top:8px"></p>
+      <label for="customerEmail">From — Your Gmail ID</label>
+      <input id="customerEmail" type="email" placeholder="Enter your Gmail address" autocomplete="email" required>
+      <label for="ownerEmail">To</label>
+      <input id="ownerEmail" type="email" value="sr3815729@gmail.com" readonly>
+      <label for="customerMessage">Type anything / Ask a question</label>
+      <textarea id="customerMessage" placeholder="Write your message here..."></textarea>
+      <button style="margin-top:12px;width:100%" onclick="sendPremiumRequestEmail()">Open Gmail / Email App →</button>
+      <p style="font-size:11px;color:var(--sub);line-height:1.5;margin-top:9px">This opens a pre-filled email draft addressed to sr3815729@gmail.com. The actual From address is the account signed in to Gmail; the typed address is included in the message for reference. Press Send to deliver it to the owner.</p>
+    </div>
+    <div class="code-area" id="codeArea">
+      <div class="code-title">🔐 Enter your code here</div>
+      <div>Selected package: <span class="selected-plan" id="selectedPlanText"></span></div>
+      <input class="code-input" id="premiumCodeInput" type="text" inputmode="text" autocomplete="one-time-code" placeholder="Enter your code here">
+      <div class="code-row"><button onclick="activatePremiumCode()">ACTIVATE PREMIUM</button><button onclick="clearPremiumCode()">Change Package</button></div>
+      <div class="code-status" id="codeStatus"></div>
+    </div>
+    <div class="premium-note">Code must match the selected package. Each code is single-use in this browser profile. Important: this simple HTML version stores used codes on this device only; it cannot stop reuse on another device/browser. Codes are embedded in the HTML source, so do not treat them as secret.</div>
+  </div>
+</div>
+
+<div id="fileInputs">
+  <input type="file" id="imgInput" accept="image/*">
+  <input type="file" id="videoInput" accept="video/*">
+  <input type="file" id="cameraInput" accept="image/*" capture="environment">
+  <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.zip">
+</div>
+
+<script>
+// Independent diagnostics: show JavaScript failures visibly on mobile instead of silently leaving a dead UI.
+(function(){
+  function showProblem(message){
+    try {
+      var box=document.getElementById('aimindRuntimeProblem');
+      if(!box){ box=document.createElement('div'); box.id='aimindRuntimeProblem'; box.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483647;background:#7f1d1d;color:#fff;padding:12px;border-radius:10px;font:13px/1.45 sans-serif;box-shadow:0 4px 18px #0008;'; document.body.appendChild(box); }
+      box.textContent='AI MIND PRO JavaScript error: '+String(message)+' — please send this message to support.';
+    } catch(e){}
+  }
+  window.addEventListener('error',function(e){showProblem((e.message||'Script error')+(e.filename?' ('+e.filename.split('/').pop()+':'+e.lineno+')':''));});
+  window.addEventListener('unhandledrejection',function(e){showProblem(e.reason&&e.reason.message?e.reason.message:e.reason||'Promise error');});
+})();
+</script>
+<script>
+// Mobile file:// viewers sometimes block localStorage. Keep the app interactive even then.
+const __memoryStore = Object.create(null);
+function safeGet(key) { try { return window.localStorage.getItem(key); } catch (e) { return Object.prototype.hasOwnProperty.call(__memoryStore,key) ? __memoryStore[key] : null; } }
+function safeSet(key, value) { try { window.localStorage.setItem(key, String(value)); } catch (e) { __memoryStore[key] = String(value); } }
+function safeRemove(key) { try { window.localStorage.removeItem(key); } catch (e) { delete __memoryStore[key]; } }
+const welcome = document.getElementById('welcome');
+const chatBox = document.getElementById('chatBox');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const attachBtn = document.getElementById('attachBtn');
+const attachMenu = document.getElementById('attachMenu');
+const themeBtn = document.getElementById('themeBtn');
+const clearBtn = document.getElementById('clearBtn');
+const imgInput = document.getElementById('imgInput');
+const videoInput = document.getElementById('videoInput');
+const cameraInput = document.getElementById('cameraInput');
+const fileInput = document.getElementById('fileInput');
+const premiumBtn = document.getElementById('premiumBtn');
+const premiumPanel = document.getElementById('premiumPanel');
+const closePremium = document.getElementById('closePremium');
+const creditDisplay = document.getElementById('creditDisplay');
+let imageCredits = Number(safeGet('ai_mind_image_credits_v4') || 10);
+let premiumUntil = Number(safeGet('ai_mind_premium_until_v6_test') || 0);
+let premiumPlan = safeGet('ai_mind_premium_plan_v6_test') || '';
+let premiumActive = premiumUntil > Date.now();
+let selectedPremiumPlan = '';
+let codeFirstEnteredAt = 0;
+let premiumTimer = null;
+
+const PREMIUM_GMAIL = 'sr3815729@gmail.com';
+const PLAN_NAMES = { '24h':'24 Hours Premium','51h':'51 Hours Premium','1m':'1 Month Premium','99d':'99 Days Premium','5m':'5 Months Premium','111d':'111 Days Premium','1y':'1 Year Premium' };
+// 7,000 pre-generated codes: 1,000 for each package.
+// IMPORTANT: This HTML-only version tracks redeemed codes in this browser's localStorage only.
+// It cannot prevent reuse on another device/browser; hard-coded codes are visible in source.
+const PREMIUM_CODES = {"082808":"24h","615574":"24h","673087":"24h","780557":"24h","239794":"24h","847029":"24h","025862":"24h","255189":"24h","797802":"24h","174457":"24h","447228":"24h","399537":"24h","606523":"24h","466293":"24h","766358":"24h","085246":"24h","573613":"24h","552030":"24h","430078":"24h","595887":"24h","986769":"24h","267176":"24h","637039":"24h","216474":"24h","804420":"24h","521352":"24h","038506":"24h","034764":"24h","510178":"24h","611640":"24h","962246":"24h","268758":"24h","416515":"24h","913760":"24h","921976":"24h","962530":"24h","746560":"24h","450359":"24h","779685":"24h","961871":"24h","709624":"24h","454613":"24h","426492":"24h","942557":"24h","944763":"24h","633654":"24h","255684":"24h","155165":"24h","217311":"24h","550790":"24h","122128":"24h","984194":"24h","652178":"24h","140943":"24h","292268":"24h","671091":"24h","483039":"24h","041786":"24h","856870":"24h","127975":"24h","198250":"24h","616536":"24h","062385":"24h","652445":"24h","533580":"24h","707437":"24h","210833":"24h","327021":"24h","715450":"24h","529927":"24h","497395":"24h","976981":"24h","569295":"24h","084665":"24h","300681":"24h","414552":"24h","839363":"24h","001906":"24h","431058":"24h","031040":"24h","018390":"24h","484402":"24h","305429":"24h","230247":"24h","898509":"24h","533811":"24h","116137":"24h","097225":"24h","507797":"24h","646395":"24h","289174":"24h","960868":"24h","893561":"24h","080798":"24h","353695":"24h","132238":"24h","976853":"24h","232686":"24h","764569":"24h","179745":"24h","771763":"24h","036197":"24h","237277":"24h","047650":"24h","830469":"24h","924776":"24h","818122":"24h","030512":"24h","523831":"24h","827735":"24h","336008":"24h","203624":"24h","649453":"24h","527376":"24h","683188":"24h","841020":"24h","784640":"24h","760336":"24h","420756":"24h","473455":"24h","463272":"24h","657225":"24h","127291":"24h","746171":"24h","367025":"24h","576204":"24h","414408":"24h","172480":"24h","416218":"24h","080326":"24h","023535":"24h","397166":"24h","953050":"24h","027129":"24h","249602":"24h","388157":"24h","208673":"24h","498728":"24h","462782":"24h","578032":"24h","158464":"24h","115372":"24h","276767":"24h","576599":"24h","810761":"24h","940655":"24h","717265":"24h","537473":"24h","410862":"24h","462606":"24h","443645":"24h","129835":"24h","104167":"24h","674290":"24h","721610":"24h","009657":"24h","362013":"24h","100318":"24h","491999":"24h","241993":"24h","843310":"24h","072384":"24h","045305":"24h","185364":"24h","928731":"24h","843739":"24h","063423":"24h","369158":"24h","314133":"24h","204079":"24h","204724":"24h","625566":"24h","420592":"24h","698532":"24h","591236":"24h","741098":"24h","029809":"24h","645718":"24h","534044":"24h","655774":"24h","268047":"24h","852020":"24h","478141":"24h","273253":"24h","027276":"24h","491942":"24h","975249":"24h","344252":"24h","569622":"24h","920665":"24h","181100":"24h","523380":"24h","763806":"24h","647983":"24h","553113":"24h","444171":"24h","495869":"24h","916408":"24h","594709":"24h","787294":"24h","179829":"24h","488041":"24h","400846":"24h","763139":"24h","709165":"24h","732362":"24h","997922":"24h","555173":"24h","894708":"24h","403967":"24h","656971":"24h","005762":"24h","961706":"24h","125611":"24h","438772":"24h","696291":"24h","319515":"24h","274066":"24h","260697":"24h","531782":"24h","454080":"24h","552846":"24h","777566":"24h","925623":"24h","133738":"24h","272393":"24h","353261":"24h","185571":"24h","509026":"24h","204058":"24h","036990":"24h","443703":"24h","993833":"24h","614054":"24h","396885":"24h","440831":"24h","824227":"24h","566048":"24h","464419":"24h","886603":"24h","926940":"24h","324967":"24h","110169":"24h","149646":"24h","408066":"24h","924766":"24h","057933":"24h","494109":"24h","989522":"24h","311594":"24h","296277":"24h","127469":"24h","253217":"24h","425807":"24h","717930":"24h","329815":"24h","552420":"24h","600667":"24h","962568":"24h","488914":"24h","207183":"24h","587942":"24h","717286":"24h","864098":"24h","596129":"24h","178583":"24h","690861":"24h","049390":"24h","748177":"24h","849922":"24h","977750":"24h","804268":"24h","358921":"24h","329425":"24h","738614":"24h","247976":"24h","292490":"24h","241008":"24h","393961":"24h","927150":"24h","746544":"24h","695404":"24h","181124":"24h","433914":"24h","673295":"24h","385376":"24h","040477":"24h","609413":"24h","671085":"24h","271004":"24h","395568":"24h","091414":"24h","612483":"24h","135039":"24h","306154":"24h","829707":"24h","134272":"24h","210165":"24h","115043":"24h","410836":"24h","265143":"24h","691353":"24h","549974":"24h","904445":"24h","141383":"24h","239739":"24h","990694":"24h","523826":"24h","247573":"24h","481112":"24h","810255":"24h","854403":"24h","629577":"24h","499344":"24h","600389":"24h","345299":"24h","116975":"24h","965277":"24h","027314":"24h","539598":"24h","391338":"24h","955065":"24h","239845":"24h","064621":"24h","284510":"24h","979013":"24h","516457":"24h","920827":"24h","523366":"24h","557166":"24h","126836":"24h","361485":"24h","921538":"24h","736046":"24h","159117":"24h","984637":"24h","868807":"24h","496258":"24h","604043":"24h","706827":"24h","644700":"24h","528385":"24h","342010":"24h","380851":"24h","696151":"24h","716959":"24h","176451":"24h","770843":"24h","477709":"24h","047205":"24h","554133":"24h","741038":"24h","837264":"24h","213580":"24h","658484":"24h","725141":"24h","665968":"24h","675550":"24h","891956":"24h","705564":"24h","677890":"24h","722030":"24h","656968":"24h","715805":"24h","510181":"24h","552756":"24h","640747":"24h","575623":"24h","992209":"24h","104124":"24h","082732":"24h","265663":"24h","136635":"24h","849199":"24h","074907":"24h","540015":"24h","990566":"24h","700190":"24h","041444":"24h","656317":"24h","647956":"24h","893129":"24h","895337":"24h","034874":"24h","710985":"24h","660051":"24h","840326":"24h","018344":"24h","050214":"24h","260127":"24h","146356":"24h","651601":"24h","080508":"24h","474828":"24h","827788":"24h","997402":"24h","177719":"24h","914985":"24h","251888":"24h","716832":"24h","436562":"24h","504724":"24h","277201":"24h","125866":"24h","370543":"24h","025061":"24h","695265":"24h","113433":"24h","112961":"24h","582498":"24h","923940":"24h","973428":"24h","632845":"24h","443655":"24h","259091":"24h","294089":"24h","941648":"24h","494115":"24h","012865":"24h","791056":"24h","634110":"24h","925202":"24h","636083":"24h","083982":"24h","046844":"24h","638737":"24h","769157":"24h","262524":"24h","662104":"24h","996975":"24h","928612":"24h","530280":"24h","056052":"24h","802836":"24h","050274":"24h","274110":"24h","686934":"24h","869955":"24h","013990":"24h","857826":"24h","338217":"24h","686510":"24h","740191":"24h","308827":"24h","896008":"24h","809033":"24h","639881":"24h","464680":"24h","244333":"24h","124903":"24h","910074":"24h","117659":"24h","447743":"24h","531703":"24h","353117":"24h","617844":"24h","203339":"24h","713892":"24h","845931":"24h","420202":"24h","801667":"24h","565176":"24h","369452":"24h","401432":"24h","110891":"24h","168784":"24h","889760":"24h","471849":"24h","567566":"24h","964581":"24h","316604":"24h","528920":"24h","625258":"24h","709340":"24h","168603":"24h","666368":"24h","697108":"24h","369862":"24h","174978":"24h","888632":"24h","652361":"24h","045504":"24h","410517":"24h","816033":"24h","530313":"24h","478149":"24h","866558":"24h","623914":"24h","529817":"24h","275515":"24h","324096":"24h","162492":"24h","956868":"24h","112963":"24h","991702":"24h","844880":"24h","319370":"24h","379041":"24h","811958":"24h","366777":"24h","130553":"24h","662898":"24h","304378":"24h","021144":"24h","032087":"24h","720797":"24h","061399":"24h","940127":"24h","076191":"24h","082321":"24h","378540":"24h","247040":"24h","728774":"24h","038445":"24h","614479":"24h","990685":"24h","153025":"24h","398565":"24h","318335":"24h","865320":"24h","330594":"24h","316677":"24h","856224":"24h","759947":"24h","848513":"24h","078534":"24h","638970":"24h","066473":"24h","031564":"24h","532279":"24h","026674":"24h","639391":"24h","481055":"24h","555728":"24h","610661":"24h","075354":"24h","636292":"24h","493288":"24h","535485":"24h","149261":"24h","853675":"24h","454061":"24h","911041":"24h","580754":"24h","380367":"24h","419679":"24h","706938":"24h","261374":"24h","660851":"24h","901274":"24h","833709":"24h","729197":"24h","460237":"24h","213844":"24h","042709":"24h","762846":"24h","333986":"24h","079053":"24h","351182":"24h","434643":"24h","072352":"24h","490905":"24h","919895":"24h","483208":"24h","173309":"24h","824336":"24h","825436":"24h","992147":"24h","730961":"24h","477831":"24h","598581":"24h","444690":"24h","957309":"24h","603932":"24h","290027":"24h","095466":"24h","184530":"24h","366355":"24h","951385":"24h","015216":"24h","193637":"24h","444826":"24h","077570":"24h","973987":"24h","828368":"24h","629541":"24h","015705":"24h","000847":"24h","418877":"24h","590476":"24h","396781":"24h","430173":"24h","034200":"24h","137565":"24h","772205":"24h","054244":"24h","299634":"24h","635912":"24h","652577":"24h","642782":"24h","946542":"24h","174403":"24h","039805":"24h","330532":"24h","852842":"24h","038031":"24h","255969":"24h","506137":"24h","413361":"24h","787502":"24h","820879":"24h","087055":"24h","232858":"24h","237979":"24h","056830":"24h","706458":"24h","306821":"24h","659044":"24h","656807":"24h","908751":"24h","601346":"24h","018626":"24h","899377":"24h","450583":"24h","958951":"24h","908781":"24h","205415":"24h","665977":"24h","062888":"24h","505254":"24h","366901":"24h","669273":"24h","401134":"24h","384559":"24h","789311":"24h","722887":"24h","986354":"24h","733369":"24h","330783":"24h","558778":"24h","354634":"24h","900824":"24h","589663":"24h","827625":"24h","745012":"24h","463089":"24h","357576":"24h","003179":"24h","372707":"24h","935807":"24h","693628":"24h","554776":"24h","977251":"24h","069593":"24h","196625":"24h","980678":"24h","695741":"24h","441063":"24h","334097":"24h","147960":"24h","862325":"24h","650947":"24h","995712":"24h","773540":"24h","867425":"24h","109780":"24h","425205":"24h","874035":"24h","865747":"24h","493345":"24h","316038":"24h","568894":"24h","126362":"24h","761739":"24h","866495":"24h","346337":"24h","647491":"24h","391578":"24h","524020":"24h","904126":"24h","790472":"24h","483264":"24h","204877":"24h","001022":"24h","357220":"24h","961123":"24h","899240":"24h","236218":"24h","902591":"24h","713761":"24h","238781":"24h","649749":"24h","542269":"24h","100680":"24h","554591":"24h","273261":"24h","576907":"24h","674221":"24h","040622":"24h","212985":"24h","808759":"24h","517931":"24h","088926":"24h","615359":"24h","242892":"24h","032774":"24h","951751":"24h","296945":"24h","988268":"24h","822638":"24h","070306":"24h","978555":"24h","466798":"24h","176862":"24h","459329":"24h","621023":"24h","848238":"24h","852914":"24h","874459":"24h","106950":"24h","330187":"24h","238368":"24h","420894":"24h","766164":"24h","567634":"24h","093997":"24h","373953":"24h","549175":"24h","262381":"24h","983927":"24h","152469":"24h","196616":"24h","674301":"24h","400028":"24h","842051":"24h","006222":"24h","442746":"24h","130627":"24h","758973":"24h","376776":"24h","695689":"24h","082652":"24h","169905":"24h","288724":"24h","973052":"24h","666014":"24h","816350":"24h","675999":"24h","341167":"24h","152663":"24h","378400":"24h","212522":"24h","470293":"24h","332339":"24h","775596":"24h","432280":"24h","791236":"24h","169736":"24h","304173":"24h","823339":"24h","436351":"24h","237610":"24h","501616":"24h","156272":"24h","196290":"24h","342432":"24h","400496":"24h","688146":"24h","784856":"24h","303332":"24h","134997":"24h","603692":"24h","290129":"24h","154591":"24h","658231":"24h","276015":"24h","101691":"24h","295002":"24h","586919":"24h","050657":"24h","298007":"24h","495990":"24h","077385":"24h","476930":"24h","888961":"24h","029556":"24h","604035":"24h","356661":"24h","718627":"24h","183173":"24h","621950":"24h","898243":"24h","530611":"24h","759240":"24h","966021":"24h","809331":"24h","737667":"24h","813160":"24h","699910":"24h","385880":"24h","626991":"24h","455888":"24h","940810":"24h","189871":"24h","092502":"24h","876847":"24h","531728":"24h","402470":"24h","865244":"24h","747543":"24h","906176":"24h","136905":"24h","447811":"24h","738997":"24h","183357":"24h","018692":"24h","234853":"24h","419983":"24h","918484":"24h","671237":"24h","755732":"24h","851729":"24h","313542":"24h","446136":"24h","190031":"24h","475665":"24h","160364":"24h","385020":"24h","230666":"24h","142440":"24h","088356":"24h","845467":"24h","843136":"24h","931958":"24h","912925":"24h","082543":"24h","436582":"24h","562110":"24h","437521":"24h","552898":"24h","387579":"24h","804417":"24h","882053":"24h","091409":"24h","895159":"24h","464383":"24h","222494":"24h","281124":"24h","861174":"24h","564740":"24h","821404":"24h","735670":"24h","008010":"24h","811873":"24h","128760":"24h","591948":"24h","960989":"24h","020025":"24h","140499":"24h","185052":"24h","229724":"24h","961998":"24h","040807":"24h","804231":"24h","197027":"24h","507353":"24h","856950":"24h","399388":"24h","875384":"24h","343285":"24h","720970":"24h","071517":"24h","519128":"24h","284616":"24h","393867":"24h","143238":"24h","102517":"24h","287687":"24h","847101":"24h","837529":"24h","928931":"24h","509878":"24h","399228":"24h","616918":"24h","952849":"24h","109727":"24h","996629":"24h","116742":"24h","178453":"24h","946858":"24h","119581":"24h","938734":"24h","640672":"24h","195309":"24h","999427":"24h","401588":"24h","593565":"24h","195233":"24h","333485":"24h","667043":"24h","783629":"24h","823891":"24h","095632":"24h","096892":"24h","112517":"24h","875111":"24h","970826":"24h","206868":"24h","399407":"24h","466218":"24h","170788":"24h","581252":"24h","771224":"24h","685936":"24h","340798":"24h","259958":"24h","165040":"24h","651389":"24h","707697":"24h","040992":"24h","610726":"24h","400565":"24h","615164":"24h","572195":"24h","565490":"24h","922773":"24h","972992":"24h","415217":"24h","728034":"24h","170549":"24h","867185":"24h","356215":"24h","543973":"24h","336211":"24h","666046":"24h","144689":"24h","010267":"24h","291125":"24h","490170":"24h","788877":"24h","666190":"24h","594522":"24h","236587":"24h","827224":"24h","632267":"24h","601404":"24h","366274":"24h","209016":"24h","549587":"24h","300755":"24h","683307":"24h","532556":"24h","807234":"24h","774519":"24h","825083":"24h","714765":"24h","391664":"24h","540634":"24h","116190":"24h","328970":"24h","108562":"24h","578093":"24h","887683":"24h","977944":"24h","191840":"24h","675561":"24h","495345":"24h","390321":"24h","422759":"24h","697571":"24h","243853":"24h","563921":"24h","503046":"24h","640002":"24h","719898":"24h","059810":"24h","248086":"24h","642851":"24h","376214":"24h","366286":"24h","974989":"24h","739352":"24h","869119":"24h","967193":"24h","260575":"24h","685766":"24h","147447":"24h","943658":"24h","502293":"24h","165382":"24h","254169":"24h","467104":"24h","039590":"24h","622082":"24h","164296":"24h","622354":"24h","301528":"24h","061115":"24h","010864":"24h","791703":"24h","604644":"51h","386676":"51h","799207":"51h","782099":"51h","887948":"51h","873204":"51h","193670":"51h","227142":"51h","978874":"51h","945372":"51h","164353":"51h","838456":"51h","128702":"51h","887546":"51h","977315":"51h","469157":"51h","697293":"51h","498638":"51h","815906":"51h","285071":"51h","279078":"51h","378429":"51h","369164":"51h","244839":"51h","186612":"51h","782852":"51h","657229":"51h","532754":"51h","063113":"51h","744379":"51h","188857":"51h","892990":"51h","663652":"51h","652744":"51h","828495":"51h","084092":"51h","302006":"51h","399384":"51h","575017":"51h","486288":"51h","210606":"51h","346888":"51h","095690":"51h","987654":"51h","450225":"51h","245708":"51h","508709":"51h","916254":"51h","914342":"51h","346028":"51h","408435":"51h","504422":"51h","099282":"51h","965121":"51h","361234":"51h","935789":"51h","130811":"51h","145859":"51h","799144":"51h","291379":"51h","862918":"51h","837313":"51h","742592":"51h","465832":"51h","030031":"51h","318224":"51h","025187":"51h","243856":"51h","313635":"51h","913740":"51h","472140":"51h","051658":"51h","627730":"51h","188956":"51h","182598":"51h","529107":"51h","632343":"51h","151815":"51h","875705":"51h","533848":"51h","965654":"51h","967712":"51h","139179":"51h","814468":"51h","886088":"51h","396634":"51h","414698":"51h","954128":"51h","144881":"51h","084776":"51h","020375":"51h","525998":"51h","633196":"51h","743147":"51h","277819":"51h","751825":"51h","542492":"51h","000939":"51h","625520":"51h","674161":"51h","501261":"51h","398832":"51h","969099":"51h","346820":"51h","632560":"51h","379050":"51h","793402":"51h","319300":"51h","590010":"51h","040700":"51h","225770":"51h","600137":"51h","099241":"51h","465857":"51h","406217":"51h","785641":"51h","306885":"51h","981627":"51h","917406":"51h","913912":"51h","727244":"51h","451123":"51h","999519":"51h","557146":"51h","274369":"51h","291688":"51h","636752":"51h","160578":"51h","335912":"51h","265739":"51h","121490":"51h","414950":"51h","854531":"51h","187378":"51h","264042":"51h","767964":"51h","728074":"51h","638128":"51h","699449":"51h","548550":"51h","424267":"51h","085389":"51h","908508":"51h","628398":"51h","148479":"51h","343429":"51h","305547":"51h","991576":"51h","086019":"51h","022733":"51h","890261":"51h","488624":"51h","093857":"51h","053289":"51h","689010":"51h","198750":"51h","797347":"51h","582082":"51h","187986":"51h","085094":"51h","614763":"51h","998073":"51h","113961":"51h","355214":"51h","887217":"51h","216440":"51h","641569":"51h","821442":"51h","115285":"51h","334022":"51h","898092":"51h","985825":"51h","371213":"51h","205542":"51h","413725":"51h","222985":"51h","583724":"51h","377087":"51h","596475":"51h","239479":"51h","362063":"51h","371047":"51h","766744":"51h","134242":"51h","419143":"51h","928018":"51h","248579":"51h","995956":"51h","641830":"51h","599014":"51h","244672":"51h","662513":"51h","123647":"51h","437025":"51h","757697":"51h","527027":"51h","885087":"51h","036552":"51h","133637":"51h","443504":"51h","219678":"51h","857951":"51h","860667":"51h","602077":"51h","786165":"51h","362755":"51h","373891":"51h","858982":"51h","456573":"51h","384947":"51h","006225":"51h","652858":"51h","898462":"51h","932355":"51h","996711":"51h","296484":"51h","028517":"51h","181703":"51h","549322":"51h","169350":"51h","792725":"51h","853323":"51h","146293":"51h","974746":"51h","497375":"51h","900458":"51h","217528":"51h","872888":"51h","181237":"51h","863291":"51h","546383":"51h","328414":"51h","265000":"51h","638955":"51h","105651":"51h","599264":"51h","016091":"51h","704230":"51h","811203":"51h","186095":"51h","911781":"51h","196031":"51h","905899":"51h","238650":"51h","883538":"51h","866866":"51h","524146":"51h","581678":"51h","732254":"51h","638713":"51h","275396":"51h","329301":"51h","255895":"51h","663487":"51h","975289":"51h","834372":"51h","332910":"51h","679086":"51h","571676":"51h","138213":"51h","262836":"51h","938987":"51h","016481":"51h","402707":"51h","244199":"51h","380585":"51h","837803":"51h","913592":"51h","386600":"51h","486533":"51h","508231":"51h","104321":"51h","499668":"51h","306811":"51h","857179":"51h","352947":"51h","367370":"51h","092963":"51h","487093":"51h","740009":"51h","034835":"51h","875058":"51h","530646":"51h","208301":"51h","625839":"51h","457664":"51h","774411":"51h","275844":"51h","810250":"51h","185373":"51h","839050":"51h","284123":"51h","889622":"51h","372095":"51h","177196":"51h","684029":"51h","319461":"51h","783641":"51h","724652":"51h","682523":"51h","296779":"51h","736115":"51h","123892":"51h","158068":"51h","267957":"51h","182155":"51h","198452":"51h","684618":"51h","175543":"51h","644206":"51h","719315":"51h","214462":"51h","070577":"51h","575308":"51h","505225":"51h","943771":"51h","913836":"51h","250383":"51h","022720":"51h","198091":"51h","866879":"51h","644693":"51h","591076":"51h","454735":"51h","846351":"51h","824255":"51h","421038":"51h","889225":"51h","526257":"51h","619840":"51h","269020":"51h","327454":"51h","978186":"51h","478467":"51h","667665":"51h","960550":"51h","206444":"51h","246193":"51h","553278":"51h","039603":"51h","632569":"51h","837497":"51h","159071":"51h","950380":"51h","269325":"51h","989700":"51h","301623":"51h","065134":"51h","181734":"51h","837577":"51h","397410":"51h","748023":"51h","934137":"51h","581824":"51h","237029":"51h","931780":"51h","657307":"51h","956396":"51h","223332":"51h","293944":"51h","500185":"51h","202075":"51h","674883":"51h","152646":"51h","378856":"51h","801634":"51h","366642":"51h","637022":"51h","768823":"51h","670932":"51h","508490":"51h","961408":"51h","068527":"51h","280637":"51h","678651":"51h","767445":"51h","126670":"51h","436404":"51h","315457":"51h","105568":"51h","315743":"51h","255492":"51h","122247":"51h","290883":"51h","348751":"51h","503661":"51h","130597":"51h","472265":"51h","448119":"51h","883356":"51h","321652":"51h","031073":"51h","179872":"51h","310003":"51h","867065":"51h","368028":"51h","651273":"51h","358065":"51h","081696":"51h","523200":"51h","765441":"51h","836604":"51h","957487":"51h","688647":"51h","331627":"51h","153299":"51h","663666":"51h","193997":"51h","541478":"51h","973424":"51h","527007":"51h","176593":"51h","729239":"51h","027041":"51h","689363":"51h","297645":"51h","980621":"51h","001975":"51h","964685":"51h","379557":"51h","822198":"51h","285115":"51h","840355":"51h","440542":"51h","909402":"51h","121835":"51h","903428":"51h","327194":"51h","476754":"51h","050546":"51h","491929":"51h","586297":"51h","157588":"51h","337543":"51h","550652":"51h","549730":"51h","476118":"51h","179749":"51h","115942":"51h","788082":"51h","987008":"51h","987211":"51h","175079":"51h","939827":"51h","854266":"51h","886883":"51h","287067":"51h","032573":"51h","395064":"51h","433677":"51h","547761":"51h","566028":"51h","745232":"51h","127222":"51h","279402":"51h","572650":"51h","381289":"51h","522842":"51h","612624":"51h","965069":"51h","066266":"51h","881462":"51h","021025":"51h","389936":"51h","684344":"51h","578868":"51h","394367":"51h","837911":"51h","804613":"51h","425699":"51h","922002":"51h","051927":"51h","411517":"51h","082641":"51h","746671":"51h","177649":"51h","119874":"51h","418287":"51h","731586":"51h","489310":"51h","235330":"51h","768181":"51h","811093":"51h","972872":"51h","422680":"51h","516347":"51h","203649":"51h","834110":"51h","623277":"51h","759488":"51h","813617":"51h","539316":"51h","007053":"51h","175952":"51h","546348":"51h","408029":"51h","761767":"51h","962741":"51h","724277":"51h","544275":"51h","605596":"51h","955744":"51h","780281":"51h","765640":"51h","730270":"51h","541327":"51h","956219":"51h","679161":"51h","129379":"51h","474862":"51h","564108":"51h","141231":"51h","088928":"51h","683656":"51h","671526":"51h","941312":"51h","262314":"51h","198986":"51h","583294":"51h","091522":"51h","869602":"51h","964616":"51h","434888":"51h","631167":"51h","634909":"51h","598376":"51h","211267":"51h","395071":"51h","491567":"51h","311386":"51h","842735":"51h","713303":"51h","532772":"51h","211337":"51h","129695":"51h","859504":"51h","455625":"51h","441212":"51h","285184":"51h","986606":"51h","493671":"51h","578346":"51h","125473":"51h","512391":"51h","001398":"51h","037996":"51h","774928":"51h","187490":"51h","900627":"51h","777268":"51h","804126":"51h","351140":"51h","416115":"51h","381640":"51h","144531":"51h","206072":"51h","288089":"51h","331834":"51h","996071":"51h","357056":"51h","880359":"51h","264777":"51h","403100":"51h","180877":"51h","058123":"51h","667992":"51h","198221":"51h","341565":"51h","606112":"51h","839048":"51h","916223":"51h","652958":"51h","184374":"51h","815502":"51h","061087":"51h","804802":"51h","220352":"51h","308265":"51h","036191":"51h","644391":"51h","588614":"51h","359262":"51h","874495":"51h","242351":"51h","994990":"51h","413018":"51h","673753":"51h","842886":"51h","954822":"51h","063506":"51h","724970":"51h","280651":"51h","290356":"51h","916567":"51h","610733":"51h","684823":"51h","323446":"51h","664383":"51h","475512":"51h","370451":"51h","691926":"51h","206770":"51h","170145":"51h","964448":"51h","575472":"51h","593102":"51h","375151":"51h","489958":"51h","717786":"51h","868564":"51h","814481":"51h","867118":"51h","801530":"51h","429571":"51h","216319":"51h","147716":"51h","645184":"51h","229373":"51h","478525":"51h","319053":"51h","388602":"51h","062864":"51h","950372":"51h","328431":"51h","313712":"51h","958820":"51h","956355":"51h","990000":"51h","499967":"51h","723374":"51h","557493":"51h","359522":"51h","676158":"51h","585693":"51h","013874":"51h","633461":"51h","849544":"51h","712724":"51h","118175":"51h","765127":"51h","892571":"51h","449305":"51h","379723":"51h","685507":"51h","465714":"51h","531037":"51h","124983":"51h","275042":"51h","962933":"51h","987083":"51h","764077":"51h","861063":"51h","084039":"51h","234800":"51h","833004":"51h","495731":"51h","575856":"51h","418255":"51h","687977":"51h","204450":"51h","888991":"51h","444516":"51h","200843":"51h","198077":"51h","807407":"51h","830197":"51h","312643":"51h","152083":"51h","378269":"51h","408102":"51h","450310":"51h","221455":"51h","806049":"51h","863410":"51h","158753":"51h","837655":"51h","064545":"51h","162158":"51h","393568":"51h","479451":"51h","197363":"51h","004834":"51h","212149":"51h","811759":"51h","783764":"51h","761066":"51h","025729":"51h","290300":"51h","401116":"51h","471484":"51h","737030":"51h","231234":"51h","832190":"51h","789138":"51h","007767":"51h","519697":"51h","737572":"51h","630066":"51h","451528":"51h","547905":"51h","922623":"51h","138184":"51h","311758":"51h","733399":"51h","032407":"51h","888717":"51h","788095":"51h","533880":"51h","930261":"51h","560803":"51h","511192":"51h","244601":"51h","741194":"51h","919055":"51h","181578":"51h","053813":"51h","195083":"51h","382173":"51h","785005":"51h","065468":"51h","898041":"51h","096234":"51h","127988":"51h","336908":"51h","987144":"51h","544020":"51h","088820":"51h","606836":"51h","365103":"51h","341931":"51h","391086":"51h","409763":"51h","832481":"51h","118940":"51h","688246":"51h","735476":"51h","277626":"51h","131154":"51h","592088":"51h","715271":"51h","324134":"51h","238215":"51h","436670":"51h","885514":"51h","430209":"51h","602175":"51h","524065":"51h","862911":"51h","144083":"51h","653522":"51h","468537":"51h","359039":"51h","104156":"51h","283575":"51h","781352":"51h","376684":"51h","612353":"51h","632458":"51h","995570":"51h","232298":"51h","568806":"51h","402915":"51h","277525":"51h","567809":"51h","180047":"51h","259846":"51h","579619":"51h","571983":"51h","455674":"51h","170289":"51h","801328":"51h","048016":"51h","568084":"51h","646906":"51h","014248":"51h","241101":"51h","154539":"51h","453503":"51h","811868":"51h","155116":"51h","035139":"51h","741171":"51h","187668":"51h","541308":"51h","543296":"51h","274720":"51h","633319":"51h","734239":"51h","915437":"51h","274080":"51h","438873":"51h","341190":"51h","984382":"51h","236387":"51h","906775":"51h","061546":"51h","980349":"51h","362672":"51h","535833":"51h","689605":"51h","884512":"51h","131241":"51h","885774":"51h","049999":"51h","355822":"51h","400997":"51h","013556":"51h","590092":"51h","432398":"51h","175782":"51h","067590":"51h","141527":"51h","112495":"51h","025120":"51h","935806":"51h","390497":"51h","342283":"51h","702027":"51h","338827":"51h","572596":"51h","241827":"51h","533256":"51h","072981":"51h","097530":"51h","216187":"51h","696087":"51h","086868":"51h","316065":"51h","734024":"51h","921338":"51h","957349":"51h","309085":"51h","344977":"51h","577506":"51h","928277":"51h","701896":"51h","680518":"51h","441157":"51h","773776":"51h","375082":"51h","102190":"51h","617350":"51h","576144":"51h","862129":"51h","260830":"51h","712330":"51h","439822":"51h","252911":"51h","081715":"51h","796059":"51h","444894":"51h","512119":"51h","562715":"51h","984759":"51h","980414":"51h","784206":"51h","551200":"51h","213446":"51h","584548":"51h","776073":"51h","254776":"51h","019506":"51h","746506":"51h","720044":"51h","645249":"51h","433005":"51h","272469":"51h","035811":"51h","393270":"51h","551014":"51h","544857":"51h","161826":"51h","337905":"51h","820963":"51h","116226":"51h","709683":"51h","834430":"51h","490292":"51h","193359":"51h","523520":"51h","435513":"51h","234611":"51h","967476":"51h","329098":"51h","870645":"51h","891136":"51h","805199":"51h","801890":"51h","855888":"51h","755290":"51h","961973":"51h","310359":"51h","328129":"51h","939969":"51h","098726":"51h","209393":"51h","423712":"51h","534759":"51h","080540":"51h","141160":"51h","266370":"51h","801249":"51h","786324":"51h","046633":"51h","307752":"51h","186270":"51h","827643":"51h","896623":"51h","779873":"51h","648473":"51h","391963":"51h","414423":"51h","504330":"51h","688743":"51h","489383":"51h","668829":"51h","200531":"51h","259877":"51h","690919":"51h","886165":"51h","379554":"51h","594941":"51h","026856":"51h","159394":"51h","548051":"51h","255805":"51h","976392":"51h","577208":"51h","699637":"51h","735212":"51h","712536":"51h","038412":"51h","164185":"51h","200904":"51h","224750":"51h","680426":"51h","619306":"51h","181623":"51h","548716":"51h","760104":"51h","527724":"51h","497659":"51h","991282":"51h","894211":"51h","134728":"51h","882279":"51h","063160":"51h","665287":"51h","952650":"51h","334253":"51h","580828":"51h","045095":"51h","921610":"51h","876306":"51h","242645":"51h","554975":"51h","944508":"51h","995396":"51h","058652":"51h","430319":"51h","366261":"51h","663116":"51h","283091":"51h","199596":"51h","915795":"51h","231932":"51h","891901":"51h","540308":"51h","793594":"51h","933188":"51h","546488":"51h","116398":"51h","863449":"51h","447024":"51h","860006":"51h","527143":"51h","417827":"51h","892210":"51h","796289":"51h","169732":"51h","562925":"51h","042699":"51h","041501":"51h","623415":"51h","643656":"51h","345746":"51h","864674":"51h","483700":"51h","652565":"51h","454457":"51h","978743":"51h","860680":"51h","727441":"51h","981394":"51h","554231":"51h","743254":"51h","993035":"51h","021196":"51h","351626":"51h","162468":"51h","452467":"1m","498995":"1m","171824":"1m","643383":"1m","982963":"1m","202887":"1m","331915":"1m","620971":"1m","215218":"1m","746165":"1m","796554":"1m","944119":"1m","113519":"1m","444575":"1m","634111":"1m","737137":"1m","896495":"1m","616389":"1m","684992":"1m","689883":"1m","719416":"1m","573134":"1m","516234":"1m","302835":"1m","322075":"1m","986523":"1m","854717":"1m","604818":"1m","148692":"1m","484587":"1m","536024":"1m","849211":"1m","672960":"1m","717008":"1m","031155":"1m","569699":"1m","009859":"1m","949546":"1m","365525":"1m","363702":"1m","343400":"1m","053155":"1m","460258":"1m","039200":"1m","416050":"1m","181173":"1m","790403":"1m","002454":"1m","595612":"1m","250789":"1m","299174":"1m","935365":"1m","128269":"1m","266993":"1m","342116":"1m","010502":"1m","026409":"1m","508196":"1m","994164":"1m","827395":"1m","628630":"1m","210748":"1m","977602":"1m","179241":"1m","624584":"1m","474954":"1m","225626":"1m","740592":"1m","137609":"1m","764517":"1m","482822":"1m","075429":"1m","805595":"1m","184557":"1m","594162":"1m","678144":"1m","572058":"1m","573266":"1m","786870":"1m","504744":"1m","077471":"1m","223557":"1m","161878":"1m","102732":"1m","862168":"1m","062936":"1m","519238":"1m","048278":"1m","726280":"1m","183326":"1m","824651":"1m","006162":"1m","412350":"1m","916106":"1m","944294":"1m","505831":"1m","309709":"1m","470682":"1m","179834":"1m","367599":"1m","527545":"1m","740467":"1m","474025":"1m","486246":"1m","408525":"1m","378360":"1m","302615":"1m","296003":"1m","233368":"1m","508342":"1m","711900":"1m","102803":"1m","867654":"1m","109745":"1m","764323":"1m","088994":"1m","190522":"1m","112899":"1m","204728":"1m","411277":"1m","812145":"1m","532257":"1m","881088":"1m","867103":"1m","356180":"1m","029363":"1m","203188":"1m","965684":"1m","759204":"1m","977435":"1m","073729":"1m","943449":"1m","582237":"1m","731654":"1m","796651":"1m","742393":"1m","315020":"1m","154474":"1m","807141":"1m","615706":"1m","333741":"1m","993855":"1m","701447":"1m","718287":"1m","050847":"1m","911303":"1m","449811":"1m","593125":"1m","853853":"1m","947168":"1m","748106":"1m","743644":"1m","101719":"1m","810954":"1m","150573":"1m","449653":"1m","554412":"1m","255160":"1m","733270":"1m","660710":"1m","708297":"1m","480792":"1m","976922":"1m","321894":"1m","140431":"1m","995283":"1m","675315":"1m","963200":"1m","863612":"1m","084870":"1m","082548":"1m","100895":"1m","401652":"1m","247063":"1m","820604":"1m","475444":"1m","552948":"1m","311523":"1m","444396":"1m","185995":"1m","866515":"1m","844185":"1m","450772":"1m","198622":"1m","981033":"1m","001947":"1m","959493":"1m","217227":"1m","675659":"1m","782055":"1m","951290":"1m","887164":"1m","399732":"1m","417820":"1m","540281":"1m","410683":"1m","631260":"1m","006637":"1m","594031":"1m","484809":"1m","306750":"1m","750917":"1m","438378":"1m","680169":"1m","932053":"1m","609001":"1m","832427":"1m","523476":"1m","720406":"1m","936774":"1m","868672":"1m","675078":"1m","434222":"1m","475194":"1m","670224":"1m","295402":"1m","671323":"1m","018606":"1m","815712":"1m","797440":"1m","432563":"1m","691405":"1m","951748":"1m","403724":"1m","382583":"1m","913677":"1m","019212":"1m","458900":"1m","113855":"1m","591425":"1m","480627":"1m","932059":"1m","364042":"1m","984662":"1m","271958":"1m","074848":"1m","807140":"1m","262862":"1m","353572":"1m","035023":"1m","399325":"1m","262016":"1m","543302":"1m","647757":"1m","585119":"1m","666640":"1m","919845":"1m","968138":"1m","909331":"1m","210798":"1m","099386":"1m","735463":"1m","669014":"1m","232984":"1m","012151":"1m","441415":"1m","858087":"1m","799373":"1m","160294":"1m","985917":"1m","086750":"1m","194015":"1m","120701":"1m","937977":"1m","830836":"1m","003869":"1m","448143":"1m","308636":"1m","541476":"1m","557496":"1m","468267":"1m","819162":"1m","552048":"1m","422511":"1m","138217":"1m","893854":"1m","635933":"1m","385607":"1m","297422":"1m","133851":"1m","958617":"1m","815994":"1m","401181":"1m","294746":"1m","691228":"1m","845996":"1m","345902":"1m","360763":"1m","637322":"1m","004257":"1m","677155":"1m","340277":"1m","081253":"1m","205468":"1m","612460":"1m","618214":"1m","946837":"1m","153202":"1m","534717":"1m","642579":"1m","911159":"1m","360734":"1m","262129":"1m","977013":"1m","043880":"1m","862688":"1m","639968":"1m","505195":"1m","220037":"1m","145651":"1m","906069":"1m","769727":"1m","351668":"1m","770679":"1m","333820":"1m","460947":"1m","246351":"1m","473666":"1m","649263":"1m","919833":"1m","312782":"1m","864723":"1m","792548":"1m","615744":"1m","808735":"1m","871515":"1m","718399":"1m","797810":"1m","724749":"1m","010919":"1m","584062":"1m","030322":"1m","709885":"1m","185746":"1m","649838":"1m","735968":"1m","099176":"1m","784234":"1m","769464":"1m","745397":"1m","463756":"1m","949787":"1m","400629":"1m","948576":"1m","654965":"1m","974026":"1m","096946":"1m","859334":"1m","915581":"1m","442278":"1m","309411":"1m","288616":"1m","115080":"1m","812164":"1m","556704":"1m","538792":"1m","399794":"1m","955415":"1m","546874":"1m","227237":"1m","159776":"1m","148187":"1m","980871":"1m","356512":"1m","362771":"1m","742954":"1m","298697":"1m","331352":"1m","079356":"1m","443396":"1m","131081":"1m","193235":"1m","231337":"1m","434909":"1m","581078":"1m","997379":"1m","983561":"1m","019303":"1m","042765":"1m","162267":"1m","351134":"1m","209338":"1m","461425":"1m","370562":"1m","293209":"1m","303120":"1m","612212":"1m","506344":"1m","999891":"1m","176281":"1m","288100":"1m","957827":"1m","788342":"1m","540511":"1m","105190":"1m","090353":"1m","188991":"1m","662526":"1m","898571":"1m","825377":"1m","787390":"1m","706167":"1m","997365":"1m","124565":"1m","229474":"1m","843879":"1m","384941":"1m","765277":"1m","863076":"1m","402980":"1m","084546":"1m","608652":"1m","850118":"1m","181287":"1m","327511":"1m","836021":"1m","292463":"1m","357112":"1m","899042":"1m","181015":"1m","452863":"1m","090949":"1m","144675":"1m","583840":"1m","491003":"1m","297556":"1m","417100":"1m","441892":"1m","303562":"1m","710254":"1m","868460":"1m","663612":"1m","566623":"1m","257146":"1m","739202":"1m","287461":"1m","187413":"1m","661961":"1m","417233":"1m","266457":"1m","897194":"1m","667252":"1m","418734":"1m","742178":"1m","912170":"1m","434651":"1m","898605":"1m","930416":"1m","064175":"1m","848951":"1m","683250":"1m","278777":"1m","074716":"1m","459675":"1m","772852":"1m","340799":"1m","941837":"1m","906998":"1m","233678":"1m","565143":"1m","264277":"1m","951720":"1m","128604":"1m","851571":"1m","074491":"1m","665588":"1m","155195":"1m","450788":"1m","616214":"1m","792662":"1m","855830":"1m","315217":"1m","353177":"1m","668272":"1m","084154":"1m","212763":"1m","230486":"1m","369782":"1m","296589":"1m","631364":"1m","849516":"1m","391932":"1m","923084":"1m","732231":"1m","597090":"1m","612178":"1m","162244":"1m","031555":"1m","642111":"1m","864506":"1m","584059":"1m","548560":"1m","720945":"1m","840725":"1m","953962":"1m","233322":"1m","211436":"1m","744607":"1m","132014":"1m","595628":"1m","737487":"1m","493084":"1m","785999":"1m","231382":"1m","591896":"1m","884769":"1m","399650":"1m","872553":"1m","361241":"1m","662516":"1m","390177":"1m","180056":"1m","750932":"1m","119451":"1m","747193":"1m","434115":"1m","581389":"1m","747591":"1m","998919":"1m","228913":"1m","442724":"1m","091218":"1m","864376":"1m","055191":"1m","788960":"1m","987544":"1m","435507":"1m","513689":"1m","195763":"1m","380720":"1m","943741":"1m","388565":"1m","751889":"1m","477431":"1m","667844":"1m","940090":"1m","534533":"1m","775531":"1m","987044":"1m","078471":"1m","191001":"1m","443750":"1m","911894":"1m","443659":"1m","893711":"1m","715435":"1m","532716":"1m","846863":"1m","035385":"1m","688589":"1m","338449":"1m","223206":"1m","118341":"1m","175103":"1m","847470":"1m","365060":"1m","020970":"1m","474269":"1m","276059":"1m","199723":"1m","873016":"1m","715194":"1m","404650":"1m","052885":"1m","083272":"1m","486346":"1m","613731":"1m","721805":"1m","166507":"1m","141013":"1m","262319":"1m","377860":"1m","721553":"1m","669440":"1m","715620":"1m","841874":"1m","719542":"1m","548580":"1m","491343":"1m","412073":"1m","913757":"1m","673970":"1m","606076":"1m","385544":"1m","942665":"1m","827281":"1m","979765":"1m","111127":"1m","434226":"1m","906281":"1m","650687":"1m","143054":"1m","714618":"1m","651750":"1m","530300":"1m","329983":"1m","947785":"1m","950046":"1m","262889":"1m","754057":"1m","975462":"1m","200753":"1m","064068":"1m","677753":"1m","189367":"1m","904662":"1m","447537":"1m","831369":"1m","069541":"1m","949442":"1m","471025":"1m","036710":"1m","077502":"1m","396110":"1m","714415":"1m","156633":"1m","104935":"1m","827962":"1m","561794":"1m","249288":"1m","551110":"1m","718046":"1m","977151":"1m","398685":"1m","386874":"1m","921511":"1m","146173":"1m","387855":"1m","696968":"1m","273281":"1m","935644":"1m","801821":"1m","430895":"1m","626491":"1m","176890":"1m","665633":"1m","243865":"1m","492893":"1m","685048":"1m","262157":"1m","393293":"1m","171218":"1m","950387":"1m","322741":"1m","285899":"1m","629909":"1m","084797":"1m","521299":"1m","908118":"1m","797069":"1m","020525":"1m","460281":"1m","122190":"1m","221566":"1m","482063":"1m","825226":"1m","632943":"1m","089551":"1m","390496":"1m","721446":"1m","553755":"1m","559316":"1m","093966":"1m","371491":"1m","686320":"1m","742063":"1m","181411":"1m","982933":"1m","624478":"1m","447486":"1m","594447":"1m","162384":"1m","307332":"1m","652628":"1m","278110":"1m","572131":"1m","754101":"1m","563977":"1m","780205":"1m","880317":"1m","900804":"1m","767046":"1m","170896":"1m","394437":"1m","221785":"1m","707523":"1m","785911":"1m","639579":"1m","060028":"1m","599787":"1m","709999":"1m","844500":"1m","502391":"1m","816598":"1m","140952":"1m","994992":"1m","754381":"1m","070440":"1m","195320":"1m","987160":"1m","632173":"1m","888538":"1m","566061":"1m","215104":"1m","946567":"1m","558978":"1m","527142":"1m","125212":"1m","468732":"1m","154091":"1m","493017":"1m","887580":"1m","262217":"1m","002662":"1m","150080":"1m","782267":"1m","025118":"1m","861942":"1m","655547":"1m","288230":"1m","965295":"1m","638330":"1m","447887":"1m","567652":"1m","698888":"1m","034744":"1m","497073":"1m","342510":"1m","602830":"1m","373480":"1m","831777":"1m","413405":"1m","602240":"1m","038649":"1m","636549":"1m","638153":"1m","527287":"1m","760757":"1m","494575":"1m","201602":"1m","914761":"1m","593919":"1m","895092":"1m","682483":"1m","533852":"1m","663709":"1m","056294":"1m","362069":"1m","708946":"1m","084108":"1m","817154":"1m","851541":"1m","031908":"1m","079007":"1m","481555":"1m","408897":"1m","642866":"1m","951037":"1m","426264":"1m","734365":"1m","883240":"1m","235484":"1m","564094":"1m","948889":"1m","209912":"1m","479954":"1m","802903":"1m","531446":"1m","802420":"1m","622430":"1m","814130":"1m","330787":"1m","282718":"1m","641923":"1m","143256":"1m","146298":"1m","250801":"1m","642252":"1m","425375":"1m","875281":"1m","272824":"1m","799648":"1m","405019":"1m","112239":"1m","128099":"1m","380752":"1m","914144":"1m","109693":"1m","643007":"1m","370988":"1m","854153":"1m","212632":"1m","155265":"1m","844649":"1m","115590":"1m","647788":"1m","218040":"1m","403948":"1m","407980":"1m","890546":"1m","584010":"1m","616558":"1m","040392":"1m","298951":"1m","553130":"1m","098965":"1m","742615":"1m","375781":"1m","567481":"1m","206182":"1m","057602":"1m","470243":"1m","669326":"1m","344923":"1m","071082":"1m","941357":"1m","727366":"1m","111037":"1m","683285":"1m","140104":"1m","769551":"1m","151572":"1m","160935":"1m","111335":"1m","354803":"1m","444174":"1m","018798":"1m","956543":"1m","013001":"1m","214713":"1m","715662":"1m","817186":"1m","939473":"1m","740700":"1m","655633":"1m","858555":"1m","102917":"1m","877539":"1m","280395":"1m","625920":"1m","077011":"1m","487303":"1m","143557":"1m","353521":"1m","488629":"1m","648396":"1m","593974":"1m","600985":"1m","309831":"1m","547198":"1m","182414":"1m","925081":"1m","127847":"1m","840231":"1m","446280":"1m","718936":"1m","162459":"1m","809217":"1m","827325":"1m","604221":"1m","700928":"1m","677967":"1m","499150":"1m","832538":"1m","197350":"1m","305757":"1m","902733":"1m","578788":"1m","373578":"1m","387856":"1m","346627":"1m","142010":"1m","503179":"1m","853270":"1m","283547":"1m","120040":"1m","098241":"1m","969470":"1m","210391":"1m","354777":"1m","531500":"1m","218946":"1m","335115":"1m","712761":"1m","480251":"1m","749275":"1m","604179":"1m","827210":"1m","919079":"1m","786312":"1m","643937":"1m","694708":"1m","867292":"1m","008632":"1m","285433":"1m","046393":"1m","333558":"1m","249717":"1m","524894":"1m","352718":"1m","402621":"1m","429676":"1m","532958":"1m","456308":"1m","965795":"1m","516458":"1m","985528":"1m","626757":"1m","268730":"1m","608803":"1m","479615":"1m","626099":"1m","537170":"1m","549418":"1m","631915":"1m","426824":"1m","337357":"1m","486223":"1m","944062":"1m","942186":"1m","339326":"1m","060103":"1m","252810":"1m","862814":"1m","938771":"1m","428611":"1m","590829":"1m","609269":"1m","069145":"1m","818382":"1m","481640":"1m","513942":"1m","575885":"1m","129352":"1m","951618":"1m","564738":"1m","278160":"1m","740893":"1m","751299":"1m","002881":"1m","043929":"1m","216406":"1m","783734":"1m","073534":"1m","667418":"1m","438950":"1m","676582":"1m","562705":"1m","203976":"1m","454717":"1m","474416":"1m","363220":"1m","235022":"1m","161090":"1m","896383":"1m","361467":"1m","643486":"1m","312820":"1m","279858":"1m","869374":"1m","550376":"1m","180991":"1m","514077":"1m","084007":"1m","382386":"1m","264369":"1m","839580":"1m","205270":"1m","543686":"1m","676990":"1m","890110":"1m","936159":"1m","282020":"1m","408594":"1m","172342":"1m","244146":"1m","677144":"1m","645571":"1m","414526":"1m","171842":"1m","091729":"1m","309091":"1m","595813":"1m","652595":"1m","593580":"1m","387095":"1m","510427":"1m","589539":"1m","763668":"1m","129500":"1m","174426":"1m","166728":"1m","631319":"1m","026996":"1m","601612":"1m","886482":"1m","595645":"1m","188333":"1m","113657":"1m","481858":"1m","405980":"99d","231175":"99d","057429":"99d","683605":"99d","348965":"99d","691028":"99d","794042":"99d","888893":"99d","157547":"99d","226063":"99d","483405":"99d","690205":"99d","096022":"99d","085010":"99d","459005":"99d","125694":"99d","086035":"99d","124969":"99d","508523":"99d","878525":"99d","408359":"99d","396029":"99d","336017":"99d","282534":"99d","556744":"99d","404303":"99d","265188":"99d","249617":"99d","294453":"99d","184153":"99d","437853":"99d","823400":"99d","577461":"99d","081142":"99d","214403":"99d","532512":"99d","275728":"99d","377573":"99d","330583":"99d","719366":"99d","389681":"99d","076994":"99d","268741":"99d","139438":"99d","333247":"99d","209554":"99d","444046":"99d","342970":"99d","049825":"99d","964431":"99d","967764":"99d","947493":"99d","959210":"99d","537159":"99d","828059":"99d","338049":"99d","453304":"99d","582028":"99d","415679":"99d","164973":"99d","712345":"99d","189076":"99d","031151":"99d","659533":"99d","356116":"99d","292807":"99d","498501":"99d","637557":"99d","409019":"99d","353118":"99d","844073":"99d","951393":"99d","299461":"99d","450004":"99d","091877":"99d","030759":"99d","314901":"99d","907012":"99d","059608":"99d","155909":"99d","298070":"99d","246763":"99d","489975":"99d","664334":"99d","529014":"99d","824761":"99d","596038":"99d","599380":"99d","567781":"99d","213870":"99d","970972":"99d","175508":"99d","036844":"99d","879323":"99d","903973":"99d","712705":"99d","997256":"99d","874244":"99d","452323":"99d","825927":"99d","806532":"99d","778412":"99d","658537":"99d","106481":"99d","433694":"99d","866944":"99d","456859":"99d","720791":"99d","441295":"99d","748458":"99d","774797":"99d","397951":"99d","970074":"99d","943534":"99d","308132":"99d","567361":"99d","797610":"99d","006133":"99d","419430":"99d","160102":"99d","713789":"99d","895452":"99d","570544":"99d","071929":"99d","393107":"99d","762444":"99d","311977":"99d","653695":"99d","666800":"99d","843979":"99d","974807":"99d","540248":"99d","780243":"99d","864172":"99d","801051":"99d","784995":"99d","080765":"99d","710622":"99d","258430":"99d","393442":"99d","370068":"99d","863059":"99d","169914":"99d","431756":"99d","338385":"99d","403404":"99d","930889":"99d","314432":"99d","181866":"99d","596229":"99d","290297":"99d","820887":"99d","859958":"99d","987459":"99d","407150":"99d","461554":"99d","491345":"99d","941635":"99d","545684":"99d","287419":"99d","832714":"99d","791733":"99d","458729":"99d","483441":"99d","528328":"99d","477190":"99d","279647":"99d","646187":"99d","142063":"99d","076907":"99d","520048":"99d","077957":"99d","262489":"99d","207245":"99d","332117":"99d","647722":"99d","444606":"99d","748933":"99d","470484":"99d","937297":"99d","254216":"99d","213313":"99d","859800":"99d","993290":"99d","080692":"99d","170407":"99d","071589":"99d","679690":"99d","528366":"99d","519988":"99d","054683":"99d","525718":"99d","671927":"99d","243146":"99d","993502":"99d","617618":"99d","053441":"99d","503194":"99d","456838":"99d","337252":"99d","786239":"99d","685607":"99d","080927":"99d","859041":"99d","103456":"99d","235186":"99d","285618":"99d","280884":"99d","146635":"99d","502162":"99d","330484":"99d","060800":"99d","909786":"99d","971151":"99d","140648":"99d","616707":"99d","775483":"99d","721442":"99d","394581":"99d","643182":"99d","585960":"99d","212282":"99d","538027":"99d","953430":"99d","148595":"99d","195212":"99d","692351":"99d","285113":"99d","868447":"99d","436563":"99d","935327":"99d","700276":"99d","539378":"99d","585284":"99d","481674":"99d","186681":"99d","915493":"99d","315926":"99d","210563":"99d","302274":"99d","512610":"99d","329872":"99d","803903":"99d","025167":"99d","948111":"99d","022448":"99d","217881":"99d","279984":"99d","077806":"99d","952079":"99d","877346":"99d","629659":"99d","648066":"99d","351613":"99d","135656":"99d","091234":"99d","589918":"99d","733663":"99d","617004":"99d","643483":"99d","466484":"99d","965521":"99d","845324":"99d","501860":"99d","234020":"99d","690643":"99d","110672":"99d","678893":"99d","241446":"99d","538026":"99d","853565":"99d","206940":"99d","592746":"99d","704657":"99d","573585":"99d","897282":"99d","367713":"99d","280773":"99d","408452":"99d","741925":"99d","343899":"99d","713456":"99d","854879":"99d","077347":"99d","206869":"99d","166442":"99d","627950":"99d","856514":"99d","432952":"99d","442758":"99d","616496":"99d","100662":"99d","779731":"99d","460112":"99d","491397":"99d","136518":"99d","028161":"99d","977061":"99d","137794":"99d","810188":"99d","518472":"99d","666205":"99d","707112":"99d","501891":"99d","473428":"99d","590832":"99d","287140":"99d","243364":"99d","558052":"99d","358077":"99d","394512":"99d","655928":"99d","713258":"99d","663820":"99d","307970":"99d","384349":"99d","106693":"99d","240894":"99d","519230":"99d","782398":"99d","697701":"99d","146500":"99d","194378":"99d","352946":"99d","547010":"99d","750996":"99d","172939":"99d","325340":"99d","024519":"99d","940895":"99d","436082":"99d","983775":"99d","921627":"99d","810974":"99d","106766":"99d","390744":"99d","670103":"99d","398074":"99d","368778":"99d","497134":"99d","330082":"99d","964156":"99d","121960":"99d","733184":"99d","929550":"99d","250599":"99d","368099":"99d","226991":"99d","328161":"99d","238704":"99d","310820":"99d","796794":"99d","494365":"99d","603239":"99d","107539":"99d","168860":"99d","178133":"99d","114137":"99d","212745":"99d","290131":"99d","974743":"99d","324185":"99d","764367":"99d","521825":"99d","324369":"99d","453256":"99d","196587":"99d","985753":"99d","670577":"99d","166878":"99d","266984":"99d","462437":"99d","869842":"99d","762969":"99d","343889":"99d","368896":"99d","238898":"99d","766468":"99d","642611":"99d","658738":"99d","231910":"99d","735328":"99d","889568":"99d","106820":"99d","118451":"99d","244547":"99d","784387":"99d","825548":"99d","076979":"99d","272557":"99d","353618":"99d","631857":"99d","202202":"99d","248762":"99d","872407":"99d","378945":"99d","277262":"99d","284496":"99d","823450":"99d","756398":"99d","278649":"99d","342800":"99d","654761":"99d","026833":"99d","819433":"99d","488602":"99d","379326":"99d","047124":"99d","257791":"99d","479163":"99d","798285":"99d","977120":"99d","348484":"99d","358998":"99d","128124":"99d","831981":"99d","998502":"99d","258970":"99d","744941":"99d","691141":"99d","791041":"99d","099541":"99d","513163":"99d","319003":"99d","760950":"99d","402102":"99d","237644":"99d","825486":"99d","697941":"99d","977037":"99d","487363":"99d","123681":"99d","697779":"99d","256931":"99d","008997":"99d","185149":"99d","723953":"99d","038501":"99d","829211":"99d","268917":"99d","644943":"99d","568351":"99d","334119":"99d","207030":"99d","131244":"99d","412023":"99d","843657":"99d","385765":"99d","891217":"99d","060260":"99d","255285":"99d","996692":"99d","028347":"99d","820424":"99d","412746":"99d","740551":"99d","550266":"99d","021959":"99d","695641":"99d","606843":"99d","219268":"99d","563497":"99d","472911":"99d","728157":"99d","910677":"99d","641477":"99d","678389":"99d","276433":"99d","404816":"99d","282454":"99d","257148":"99d","978406":"99d","120696":"99d","523458":"99d","251102":"99d","744317":"99d","660065":"99d","878398":"99d","757754":"99d","793834":"99d","690788":"99d","071587":"99d","514609":"99d","356848":"99d","954048":"99d","677071":"99d","863285":"99d","970937":"99d","034734":"99d","754987":"99d","771752":"99d","104936":"99d","930325":"99d","505011":"99d","989569":"99d","812185":"99d","035075":"99d","012873":"99d","864076":"99d","658669":"99d","619581":"99d","408534":"99d","770180":"99d","068374":"99d","824483":"99d","696503":"99d","917969":"99d","077637":"99d","188851":"99d","013026":"99d","911328":"99d","006919":"99d","753568":"99d","272706":"99d","306118":"99d","851146":"99d","991324":"99d","434519":"99d","835597":"99d","715404":"99d","815209":"99d","092826":"99d","175443":"99d","902265":"99d","807699":"99d","065406":"99d","664790":"99d","153110":"99d","093135":"99d","193331":"99d","577719":"99d","724378":"99d","859949":"99d","695281":"99d","478408":"99d","174694":"99d","724967":"99d","246048":"99d","826861":"99d","933292":"99d","747244":"99d","595716":"99d","564050":"99d","030941":"99d","244379":"99d","172576":"99d","216170":"99d","512881":"99d","638336":"99d","842277":"99d","263848":"99d","742155":"99d","292846":"99d","426651":"99d","821973":"99d","732026":"99d","656934":"99d","590492":"99d","072305":"99d","434697":"99d","124314":"99d","026803":"99d","674003":"99d","668232":"99d","427123":"99d","059337":"99d","321239":"99d","808999":"99d","341996":"99d","772856":"99d","675147":"99d","624785":"99d","368596":"99d","123870":"99d","090538":"99d","271101":"99d","584855":"99d","726821":"99d","978444":"99d","358289":"99d","396338":"99d","349442":"99d","139352":"99d","802684":"99d","935267":"99d","713644":"99d","090350":"99d","976841":"99d","704995":"99d","430769":"99d","234618":"99d","064675":"99d","294632":"99d","740202":"99d","797027":"99d","772376":"99d","569574":"99d","066542":"99d","528869":"99d","618586":"99d","640019":"99d","633453":"99d","176552":"99d","879803":"99d","613204":"99d","486898":"99d","773991":"99d","078307":"99d","731810":"99d","881504":"99d","021658":"99d","902994":"99d","537024":"99d","418076":"99d","084648":"99d","297107":"99d","433505":"99d","520004":"99d","500344":"99d","053753":"99d","663443":"99d","068744":"99d","252776":"99d","057662":"99d","766811":"99d","495739":"99d","874055":"99d","570477":"99d","890889":"99d","609477":"99d","919999":"99d","977713":"99d","123631":"99d","878081":"99d","416537":"99d","856552":"99d","445850":"99d","554471":"99d","897096":"99d","258002":"99d","907994":"99d","442812":"99d","517058":"99d","800694":"99d","072722":"99d","398242":"99d","073409":"99d","568107":"99d","820541":"99d","779360":"99d","684853":"99d","655515":"99d","133218":"99d","822572":"99d","056060":"99d","224857":"99d","593701":"99d","551164":"99d","212858":"99d","234577":"99d","224056":"99d","759979":"99d","361704":"99d","741590":"99d","264530":"99d","470597":"99d","264989":"99d","882415":"99d","511787":"99d","192032":"99d","296556":"99d","480765":"99d","989220":"99d","192513":"99d","451450":"99d","667707":"99d","760507":"99d","810181":"99d","476111":"99d","814341":"99d","585126":"99d","411986":"99d","227738":"99d","769865":"99d","191770":"99d","564776":"99d","680769":"99d","740413":"99d","722666":"99d","780614":"99d","102247":"99d","718687":"99d","321368":"99d","009574":"99d","736452":"99d","339508":"99d","125622":"99d","749569":"99d","354160":"99d","560771":"99d","729406":"99d","542290":"99d","393813":"99d","414367":"99d","999015":"99d","102091":"99d","409886":"99d","878924":"99d","225292":"99d","340779":"99d","622915":"99d","102253":"99d","946200":"99d","078155":"99d","642123":"99d","532448":"99d","383124":"99d","923752":"99d","318862":"99d","297485":"99d","846007":"99d","924384":"99d","103025":"99d","502823":"99d","020046":"99d","344705":"99d","277200":"99d","989847":"99d","208871":"99d","013301":"99d","935191":"99d","550484":"99d","013975":"99d","631326":"99d","866606":"99d","254081":"99d","758742":"99d","914404":"99d","687058":"99d","087611":"99d","364895":"99d","812774":"99d","896986":"99d","587700":"99d","457509":"99d","601013":"99d","473162":"99d","759787":"99d","181076":"99d","578075":"99d","007849":"99d","703270":"99d","745762":"99d","102548":"99d","516284":"99d","149955":"99d","621866":"99d","176999":"99d","536976":"99d","495073":"99d","857693":"99d","380907":"99d","089526":"99d","094541":"99d","299108":"99d","958965":"99d","343617":"99d","079204":"99d","812167":"99d","653878":"99d","051904":"99d","103316":"99d","186074":"99d","300333":"99d","568388":"99d","256933":"99d","741433":"99d","227807":"99d","544537":"99d","072795":"99d","622437":"99d","577966":"99d","355947":"99d","933705":"99d","195593":"99d","642814":"99d","042997":"99d","788142":"99d","454191":"99d","873805":"99d","564651":"99d","754247":"99d","813769":"99d","904687":"99d","336973":"99d","530840":"99d","762729":"99d","412033":"99d","917384":"99d","994441":"99d","890860":"99d","091564":"99d","894185":"99d","102660":"99d","334786":"99d","149416":"99d","914259":"99d","581431":"99d","237185":"99d","693890":"99d","853265":"99d","143007":"99d","634959":"99d","011458":"99d","433330":"99d","779377":"99d","748031":"99d","879529":"99d","101849":"99d","557791":"99d","009630":"99d","284475":"99d","751453":"99d","394079":"99d","583373":"99d","890505":"99d","390436":"99d","923967":"99d","489029":"99d","140868":"99d","114851":"99d","679382":"99d","046597":"99d","884056":"99d","357130":"99d","614258":"99d","557460":"99d","969595":"99d","280696":"99d","668844":"99d","603367":"99d","550479":"99d","688907":"99d","297788":"99d","467396":"99d","288583":"99d","054224":"99d","669300":"99d","735286":"99d","019362":"99d","738462":"99d","194701":"99d","199501":"99d","514372":"99d","195346":"99d","742806":"99d","212057":"99d","320798":"99d","368720":"99d","170927":"99d","961777":"99d","335994":"99d","104815":"99d","723557":"99d","284961":"99d","122872":"99d","464198":"99d","145136":"99d","553614":"99d","254029":"99d","558694":"99d","009314":"99d","144307":"99d","109951":"99d","455997":"99d","607426":"99d","711180":"99d","187861":"99d","643949":"99d","460691":"99d","550971":"99d","061286":"99d","358817":"99d","830745":"99d","806582":"99d","392561":"99d","662115":"99d","783895":"99d","213381":"99d","423555":"99d","395335":"99d","118243":"99d","522675":"99d","680080":"99d","805529":"99d","613591":"99d","363916":"99d","583002":"99d","946532":"99d","150673":"99d","160876":"99d","809802":"99d","139919":"99d","355520":"99d","551962":"99d","471601":"99d","168476":"99d","709107":"99d","051201":"99d","188290":"99d","960903":"99d","984215":"99d","972747":"99d","108295":"99d","144703":"99d","626354":"99d","116901":"99d","277389":"99d","721644":"99d","800758":"99d","114263":"99d","192496":"99d","147352":"99d","010579":"99d","572538":"99d","094840":"99d","478699":"99d","229051":"99d","449129":"99d","102139":"99d","833481":"99d","711342":"99d","521955":"99d","965022":"99d","106582":"99d","481075":"99d","227311":"99d","173601":"99d","374191":"99d","455083":"99d","787019":"99d","085202":"99d","738999":"99d","629131":"99d","337153":"99d","833382":"99d","913749":"99d","991117":"99d","723700":"99d","098418":"99d","756284":"99d","111551":"99d","479184":"99d","175623":"99d","832948":"99d","809299":"99d","620555":"99d","736270":"99d","038147":"99d","806541":"99d","458791":"99d","464793":"99d","415014":"99d","269719":"99d","214850":"99d","438393":"99d","036532":"99d","848164":"99d","130983":"99d","839421":"99d","565287":"99d","105779":"99d","181942":"99d","574251":"99d","525549":"99d","015086":"99d","693939":"99d","536273":"99d","906707":"99d","167570":"99d","179113":"99d","601038":"99d","883070":"99d","106287":"99d","299201":"99d","322627":"99d","142062":"99d","273496":"99d","702501":"99d","066895":"99d","358227":"99d","553184":"99d","597831":"99d","661748":"99d","890129":"99d","133976":"99d","100402":"99d","432791":"99d","607786":"99d","514944":"99d","642044":"5m","794925":"5m","725355":"5m","654667":"5m","409206":"5m","196461":"5m","693837":"5m","986763":"5m","386559":"5m","699850":"5m","242139":"5m","988062":"5m","249625":"5m","426045":"5m","606559":"5m","520144":"5m","434364":"5m","166007":"5m","717945":"5m","690863":"5m","558875":"5m","308208":"5m","996752":"5m","394737":"5m","071755":"5m","220249":"5m","658957":"5m","810285":"5m","890170":"5m","640567":"5m","891045":"5m","280738":"5m","122598":"5m","078612":"5m","273712":"5m","037976":"5m","233384":"5m","892942":"5m","993195":"5m","897744":"5m","255329":"5m","712750":"5m","791509":"5m","451062":"5m","918525":"5m","136685":"5m","927229":"5m","238135":"5m","496778":"5m","921398":"5m","383615":"5m","599726":"5m","274928":"5m","905370":"5m","911379":"5m","606268":"5m","504133":"5m","870667":"5m","095801":"5m","072449":"5m","494600":"5m","815733":"5m","223756":"5m","193421":"5m","534553":"5m","962098":"5m","615535":"5m","139666":"5m","047283":"5m","259795":"5m","687279":"5m","549550":"5m","834361":"5m","499777":"5m","771635":"5m","883857":"5m","325079":"5m","862050":"5m","537174":"5m","906155":"5m","123509":"5m","295949":"5m","647087":"5m","582613":"5m","081177":"5m","243030":"5m","173946":"5m","482047":"5m","062467":"5m","182584":"5m","641796":"5m","648162":"5m","529892":"5m","811495":"5m","061987":"5m","614272":"5m","404869":"5m","268783":"5m","177274":"5m","993737":"5m","372301":"5m","021516":"5m","408041":"5m","588276":"5m","185026":"5m","637608":"5m","849044":"5m","192282":"5m","275365":"5m","177157":"5m","525954":"5m","648558":"5m","123568":"5m","945095":"5m","449092":"5m","472207":"5m","408377":"5m","059097":"5m","424236":"5m","921352":"5m","441262":"5m","222675":"5m","236413":"5m","675114":"5m","903945":"5m","577169":"5m","503357":"5m","971231":"5m","011258":"5m","143736":"5m","109164":"5m","730975":"5m","358558":"5m","114358":"5m","525223":"5m","736431":"5m","657962":"5m","877667":"5m","782054":"5m","024705":"5m","538008":"5m","816889":"5m","107828":"5m","046186":"5m","525936":"5m","706904":"5m","396537":"5m","935737":"5m","469471":"5m","165377":"5m","022036":"5m","073812":"5m","592246":"5m","755617":"5m","662068":"5m","776660":"5m","610911":"5m","536132":"5m","252359":"5m","992127":"5m","970852":"5m","584104":"5m","577786":"5m","583348":"5m","685649":"5m","798598":"5m","334606":"5m","731996":"5m","052992":"5m","807697":"5m","392784":"5m","902259":"5m","168798":"5m","046347":"5m","603532":"5m","984787":"5m","193393":"5m","177507":"5m","818635":"5m","125112":"5m","081779":"5m","952306":"5m","362951":"5m","799348":"5m","990331":"5m","446735":"5m","430386":"5m","115874":"5m","699603":"5m","759816":"5m","055728":"5m","831321":"5m","803189":"5m","487987":"5m","978818":"5m","943218":"5m","480898":"5m","339900":"5m","784574":"5m","527188":"5m","267935":"5m","386363":"5m","806937":"5m","989065":"5m","930874":"5m","007336":"5m","651729":"5m","967543":"5m","742276":"5m","471948":"5m","162059":"5m","940412":"5m","649508":"5m","683581":"5m","626081":"5m","330317":"5m","424719":"5m","699476":"5m","846193":"5m","026120":"5m","441671":"5m","423998":"5m","350885":"5m","370688":"5m","170698":"5m","097231":"5m","903281":"5m","861364":"5m","519634":"5m","439548":"5m","091188":"5m","212046":"5m","581296":"5m","502515":"5m","833107":"5m","730449":"5m","730720":"5m","065620":"5m","194444":"5m","007650":"5m","738081":"5m","139556":"5m","423249":"5m","570843":"5m","703192":"5m","141448":"5m","766895":"5m","990857":"5m","577664":"5m","877365":"5m","028447":"5m","540678":"5m","446143":"5m","559034":"5m","947974":"5m","691076":"5m","416361":"5m","522443":"5m","247724":"5m","591145":"5m","369291":"5m","359796":"5m","148754":"5m","152304":"5m","402319":"5m","241567":"5m","453583":"5m","691114":"5m","099639":"5m","609804":"5m","889094":"5m","493239":"5m","899311":"5m","189446":"5m","849109":"5m","252384":"5m","886323":"5m","430109":"5m","736977":"5m","664982":"5m","144110":"5m","656975":"5m","168240":"5m","110635":"5m","170432":"5m","749565":"5m","282578":"5m","073948":"5m","231214":"5m","382565":"5m","629462":"5m","949331":"5m","815720":"5m","701159":"5m","054314":"5m","766104":"5m","652294":"5m","235039":"5m","597663":"5m","585759":"5m","500518":"5m","255014":"5m","353350":"5m","347650":"5m","152026":"5m","026209":"5m","455872":"5m","288343":"5m","546442":"5m","418684":"5m","633914":"5m","520034":"5m","101401":"5m","574644":"5m","051524":"5m","881575":"5m","436387":"5m","750789":"5m","633644":"5m","449267":"5m","990763":"5m","282496":"5m","206071":"5m","880673":"5m","771785":"5m","797777":"5m","662348":"5m","897594":"5m","426761":"5m","990204":"5m","347330":"5m","686774":"5m","949551":"5m","267669":"5m","470062":"5m","668977":"5m","324363":"5m","984097":"5m","879027":"5m","054319":"5m","255201":"5m","141743":"5m","146639":"5m","222285":"5m","311349":"5m","741054":"5m","480796":"5m","762566":"5m","933614":"5m","352614":"5m","906979":"5m","198566":"5m","363091":"5m","184329":"5m","809916":"5m","010620":"5m","294156":"5m","002939":"5m","909107":"5m","622012":"5m","205593":"5m","835828":"5m","929665":"5m","259873":"5m","163084":"5m","730025":"5m","741751":"5m","977290":"5m","918517":"5m","493970":"5m","081131":"5m","946223":"5m","291679":"5m","027544":"5m","538490":"5m","481514":"5m","450759":"5m","328732":"5m","098416":"5m","949968":"5m","495528":"5m","576507":"5m","996977":"5m","138777":"5m","069853":"5m","021260":"5m","289463":"5m","918702":"5m","581959":"5m","825011":"5m","983051":"5m","750619":"5m","500244":"5m","379735":"5m","062044":"5m","656449":"5m","078650":"5m","065283":"5m","962490":"5m","492863":"5m","738902":"5m","179286":"5m","604076":"5m","265852":"5m","808737":"5m","802306":"5m","948531":"5m","262392":"5m","466420":"5m","712307":"5m","665144":"5m","178172":"5m","267933":"5m","558817":"5m","233573":"5m","378027":"5m","916444":"5m","800074":"5m","270574":"5m","394870":"5m","938245":"5m","607587":"5m","233440":"5m","799602":"5m","665502":"5m","162217":"5m","733432":"5m","583777":"5m","051533":"5m","715191":"5m","123739":"5m","897246":"5m","741491":"5m","221792":"5m","763574":"5m","349474":"5m","499586":"5m","980591":"5m","963251":"5m","013241":"5m","097697":"5m","249882":"5m","284352":"5m","407851":"5m","459184":"5m","449983":"5m","207291":"5m","336413":"5m","190427":"5m","750991":"5m","429935":"5m","981365":"5m","826892":"5m","134814":"5m","242916":"5m","559401":"5m","277467":"5m","746374":"5m","801909":"5m","047435":"5m","475588":"5m","072958":"5m","122354":"5m","756826":"5m","030134":"5m","726095":"5m","221398":"5m","019699":"5m","212354":"5m","736024":"5m","910555":"5m","095490":"5m","381212":"5m","346733":"5m","070391":"5m","024978":"5m","146204":"5m","501490":"5m","595860":"5m","238358":"5m","739317":"5m","316570":"5m","946456":"5m","487684":"5m","571648":"5m","081482":"5m","228194":"5m","921147":"5m","365602":"5m","390719":"5m","217312":"5m","244377":"5m","159074":"5m","962119":"5m","242315":"5m","276194":"5m","138783":"5m","567824":"5m","214870":"5m","657228":"5m","539097":"5m","052512":"5m","980412":"5m","738969":"5m","692188":"5m","715014":"5m","411571":"5m","788549":"5m","689539":"5m","580006":"5m","705154":"5m","100734":"5m","881949":"5m","479022":"5m","804747":"5m","709846":"5m","587277":"5m","932026":"5m","918947":"5m","803154":"5m","974865":"5m","120795":"5m","845846":"5m","117438":"5m","731440":"5m","705293":"5m","858141":"5m","791925":"5m","373990":"5m","186347":"5m","304163":"5m","194186":"5m","333981":"5m","283375":"5m","792505":"5m","694999":"5m","984443":"5m","564034":"5m","815479":"5m","205276":"5m","243204":"5m","835950":"5m","922978":"5m","889445":"5m","906253":"5m","187663":"5m","724984":"5m","258373":"5m","577972":"5m","870451":"5m","198123":"5m","102296":"5m","469010":"5m","559451":"5m","347041":"5m","408487":"5m","582854":"5m","861939":"5m","993719":"5m","591617":"5m","635159":"5m","433061":"5m","068317":"5m","630773":"5m","351496":"5m","268317":"5m","250332":"5m","755493":"5m","431887":"5m","057114":"5m","349160":"5m","058674":"5m","831914":"5m","414208":"5m","019679":"5m","699457":"5m","453640":"5m","814779":"5m","206280":"5m","805217":"5m","070966":"5m","646451":"5m","756196":"5m","512352":"5m","643357":"5m","226678":"5m","540959":"5m","043051":"5m","824798":"5m","410331":"5m","757909":"5m","717334":"5m","989110":"5m","251363":"5m","037437":"5m","565886":"5m","626167":"5m","593321":"5m","044375":"5m","580021":"5m","998885":"5m","943946":"5m","982352":"5m","990938":"5m","908241":"5m","774417":"5m","229332":"5m","569826":"5m","786681":"5m","198612":"5m","907929":"5m","722629":"5m","901892":"5m","305241":"5m","269630":"5m","939277":"5m","564319":"5m","146186":"5m","751493":"5m","327593":"5m","341249":"5m","581619":"5m","800862":"5m","104615":"5m","434290":"5m","776761":"5m","644176":"5m","185905":"5m","269820":"5m","323871":"5m","435625":"5m","177420":"5m","739344":"5m","784927":"5m","185912":"5m","658437":"5m","176470":"5m","881848":"5m","316122":"5m","616460":"5m","152634":"5m","652890":"5m","317114":"5m","557890":"5m","545780":"5m","677839":"5m","279044":"5m","364009":"5m","763172":"5m","214617":"5m","070128":"5m","794798":"5m","056688":"5m","809229":"5m","603093":"5m","296766":"5m","660343":"5m","706417":"5m","721731":"5m","368718":"5m","728283":"5m","769810":"5m","637948":"5m","294541":"5m","495996":"5m","116852":"5m","038761":"5m","773974":"5m","554318":"5m","300753":"5m","871535":"5m","947489":"5m","930716":"5m","190746":"5m","988526":"5m","847891":"5m","092869":"5m","357659":"5m","144371":"5m","094493":"5m","562714":"5m","398534":"5m","669531":"5m","091735":"5m","229173":"5m","197322":"5m","428929":"5m","523649":"5m","191549":"5m","800246":"5m","716933":"5m","783507":"5m","613262":"5m","569303":"5m","698878":"5m","673518":"5m","059173":"5m","431072":"5m","955097":"5m","839469":"5m","955891":"5m","296312":"5m","739115":"5m","717092":"5m","531907":"5m","374861":"5m","477520":"5m","418639":"5m","371146":"5m","858192":"5m","570902":"5m","990749":"5m","054825":"5m","088025":"5m","371176":"5m","025523":"5m","597503":"5m","048972":"5m","422912":"5m","891463":"5m","695368":"5m","859316":"5m","050465":"5m","209653":"5m","320402":"5m","321996":"5m","775529":"5m","611688":"5m","542933":"5m","442349":"5m","331997":"5m","364954":"5m","026467":"5m","079883":"5m","311181":"5m","452295":"5m","996091":"5m","835716":"5m","007669":"5m","771925":"5m","781759":"5m","564336":"5m","349735":"5m","232160":"5m","735416":"5m","995411":"5m","606194":"5m","044737":"5m","356479":"5m","892491":"5m","837112":"5m","168620":"5m","186311":"5m","277428":"5m","701286":"5m","312664":"5m","487385":"5m","016187":"5m","944831":"5m","904439":"5m","203465":"5m","657639":"5m","156332":"5m","446455":"5m","310353":"5m","300012":"5m","941805":"5m","302890":"5m","287833":"5m","961692":"5m","548855":"5m","029175":"5m","948869":"5m","642392":"5m","960602":"5m","527630":"5m","688297":"5m","955673":"5m","549515":"5m","322803":"5m","354980":"5m","910643":"5m","326411":"5m","418269":"5m","815640":"5m","637843":"5m","516506":"5m","275924":"5m","784962":"5m","921066":"5m","691305":"5m","427583":"5m","049185":"5m","579815":"5m","134101":"5m","748586":"5m","110935":"5m","346431":"5m","279590":"5m","422177":"5m","239572":"5m","812544":"5m","241145":"5m","878909":"5m","607961":"5m","693011":"5m","521912":"5m","354147":"5m","338009":"5m","762156":"5m","025793":"5m","690296":"5m","411513":"5m","680848":"5m","278709":"5m","892028":"5m","114437":"5m","690600":"5m","846272":"5m","868580":"5m","060702":"5m","103233":"5m","416834":"5m","452276":"5m","912896":"5m","891153":"5m","350204":"5m","554783":"5m","542456":"5m","484143":"5m","599338":"5m","635539":"5m","145593":"5m","941930":"5m","462542":"5m","548539":"5m","140476":"5m","538875":"5m","634434":"5m","007233":"5m","476602":"5m","409026":"5m","096734":"5m","920871":"5m","810162":"5m","289754":"5m","441374":"5m","031562":"5m","126132":"5m","810865":"5m","005795":"5m","129159":"5m","852288":"5m","361488":"5m","975440":"5m","927202":"5m","564088":"5m","524279":"5m","080612":"5m","697076":"5m","729910":"5m","411132":"5m","817834":"5m","944208":"5m","682100":"5m","916647":"5m","949972":"5m","499448":"5m","368366":"5m","898760":"5m","149726":"5m","718971":"5m","954522":"5m","516662":"5m","303793":"5m","752062":"5m","822906":"5m","126872":"5m","377194":"5m","206512":"5m","487225":"5m","213628":"5m","381886":"5m","510062":"5m","748055":"5m","559225":"5m","971284":"5m","062174":"5m","081527":"5m","303601":"5m","627960":"5m","254666":"5m","027669":"5m","013048":"5m","572740":"5m","087382":"5m","375469":"5m","565261":"5m","874366":"5m","075878":"5m","724542":"5m","886303":"5m","228741":"5m","365978":"5m","671898":"5m","219661":"5m","428533":"5m","990434":"5m","083432":"5m","997630":"5m","672461":"5m","928078":"5m","995621":"5m","733015":"5m","066869":"5m","346637":"5m","289246":"5m","270776":"5m","502171":"5m","491613":"5m","246901":"5m","258597":"5m","469572":"5m","486109":"5m","667135":"5m","361565":"5m","293872":"5m","057855":"5m","009794":"5m","816642":"5m","270659":"5m","587728":"5m","245764":"5m","817722":"5m","301590":"5m","934799":"5m","735537":"5m","761114":"5m","680832":"5m","905525":"5m","676926":"5m","605837":"5m","369629":"5m","530563":"5m","989689":"5m","858611":"5m","058970":"5m","638480":"5m","637544":"5m","686572":"5m","872338":"5m","864466":"5m","932721":"5m","802666":"5m","660346":"5m","317290":"5m","904076":"5m","617772":"5m","259741":"5m","753885":"5m","722275":"5m","205684":"5m","587774":"5m","030311":"5m","245457":"5m","267818":"5m","206470":"5m","444526":"5m","117780":"5m","580618":"5m","767563":"5m","124201":"5m","575678":"5m","667592":"5m","319368":"5m","686699":"5m","168668":"5m","510809":"5m","680146":"5m","167563":"5m","196370":"5m","438531":"5m","461998":"5m","102551":"5m","110041":"5m","759244":"5m","346546":"5m","269983":"5m","242849":"5m","972727":"5m","034824":"5m","518134":"5m","313138":"5m","915682":"5m","164047":"5m","388643":"5m","765004":"5m","392143":"5m","127085":"5m","383732":"5m","320139":"111d","044370":"111d","586738":"111d","294515":"111d","541726":"111d","306112":"111d","992085":"111d","732766":"111d","993215":"111d","229090":"111d","574717":"111d","480398":"111d","508046":"111d","673064":"111d","793207":"111d","129175":"111d","316090":"111d","916802":"111d","200429":"111d","130954":"111d","775209":"111d","570206":"111d","728676":"111d","399288":"111d","263849":"111d","447359":"111d","761873":"111d","036897":"111d","601975":"111d","588444":"111d","181043":"111d","126469":"111d","820374":"111d","631998":"111d","725960":"111d","488810":"111d","601029":"111d","002392":"111d","108690":"111d","814166":"111d","033817":"111d","641218":"111d","264086":"111d","965674":"111d","192802":"111d","766063":"111d","024428":"111d","595365":"111d","594027":"111d","851194":"111d","234634":"111d","999039":"111d","394982":"111d","820775":"111d","661738":"111d","266238":"111d","702577":"111d","746915":"111d","267961":"111d","260167":"111d","732143":"111d","928531":"111d","103112":"111d","212683":"111d","844862":"111d","199901":"111d","266145":"111d","839851":"111d","316748":"111d","513015":"111d","005315":"111d","989440":"111d","077196":"111d","036810":"111d","907753":"111d","702240":"111d","491839":"111d","757336":"111d","935314":"111d","915158":"111d","100429":"111d","052197":"111d","347896":"111d","199587":"111d","877578":"111d","961483":"111d","410785":"111d","612097":"111d","093342":"111d","206645":"111d","584956":"111d","450006":"111d","039083":"111d","984556":"111d","798250":"111d","464842":"111d","265652":"111d","750269":"111d","730885":"111d","512270":"111d","517227":"111d","506484":"111d","813798":"111d","927926":"111d","163477":"111d","982131":"111d","506848":"111d","721113":"111d","134196":"111d","368204":"111d","623496":"111d","761525":"111d","088120":"111d","768281":"111d","968256":"111d","626333":"111d","351907":"111d","251307":"111d","588898":"111d","732884":"111d","364924":"111d","455878":"111d","291176":"111d","468136":"111d","206915":"111d","107680":"111d","520230":"111d","715789":"111d","925355":"111d","961040":"111d","085469":"111d","298247":"111d","392992":"111d","754479":"111d","219917":"111d","637291":"111d","515589":"111d","330229":"111d","780341":"111d","517343":"111d","729381":"111d","501699":"111d","171725":"111d","290875":"111d","534457":"111d","690550":"111d","529833":"111d","986966":"111d","624156":"111d","999635":"111d","022335":"111d","485100":"111d","543546":"111d","989066":"111d","420471":"111d","487511":"111d","244960":"111d","323963":"111d","161692":"111d","805464":"111d","076289":"111d","390072":"111d","263833":"111d","956012":"111d","598880":"111d","147429":"111d","674365":"111d","010487":"111d","060446":"111d","875671":"111d","625222":"111d","345228":"111d","493244":"111d","672858":"111d","519151":"111d","867720":"111d","219290":"111d","855846":"111d","300165":"111d","928729":"111d","369792":"111d","182496":"111d","501253":"111d","507221":"111d","594746":"111d","074897":"111d","459529":"111d","019459":"111d","849751":"111d","389133":"111d","737966":"111d","977667":"111d","620652":"111d","344242":"111d","065969":"111d","344588":"111d","188897":"111d","123799":"111d","657103":"111d","755807":"111d","137323":"111d","403806":"111d","720135":"111d","246392":"111d","823397":"111d","376764":"111d","904562":"111d","100750":"111d","214540":"111d","738289":"111d","542371":"111d","770402":"111d","741585":"111d","446620":"111d","303007":"111d","338332":"111d","452336":"111d","089134":"111d","315842":"111d","614474":"111d","840685":"111d","553510":"111d","176400":"111d","406620":"111d","105669":"111d","450149":"111d","878536":"111d","070582":"111d","301906":"111d","099725":"111d","871119":"111d","066192":"111d","055525":"111d","912907":"111d","221580":"111d","098436":"111d","160993":"111d","846068":"111d","529929":"111d","787822":"111d","430434":"111d","510230":"111d","159699":"111d","943781":"111d","071738":"111d","828261":"111d","361410":"111d","725287":"111d","446199":"111d","132881":"111d","719692":"111d","038603":"111d","551798":"111d","186733":"111d","713687":"111d","353601":"111d","466691":"111d","812843":"111d","142181":"111d","151384":"111d","441850":"111d","527417":"111d","046972":"111d","524661":"111d","248214":"111d","640575":"111d","625069":"111d","865663":"111d","528879":"111d","279147":"111d","728520":"111d","543253":"111d","057083":"111d","547982":"111d","812692":"111d","709072":"111d","856199":"111d","325832":"111d","305274":"111d","469730":"111d","427938":"111d","816738":"111d","289721":"111d","720647":"111d","197878":"111d","028696":"111d","166723":"111d","419563":"111d","745345":"111d","456866":"111d","809986":"111d","588275":"111d","329824":"111d","072945":"111d","675121":"111d","416159":"111d","704528":"111d","553581":"111d","877143":"111d","129612":"111d","293143":"111d","628103":"111d","787774":"111d","096861":"111d","173414":"111d","942189":"111d","874776":"111d","136017":"111d","455678":"111d","057605":"111d","833617":"111d","950456":"111d","348668":"111d","378370":"111d","932366":"111d","063936":"111d","531691":"111d","422122":"111d","023567":"111d","684184":"111d","590727":"111d","245872":"111d","392109":"111d","342846":"111d","796035":"111d","985496":"111d","830460":"111d","944060":"111d","654944":"111d","274169":"111d","938362":"111d","777900":"111d","483585":"111d","023371":"111d","169480":"111d","138030":"111d","008013":"111d","873734":"111d","206843":"111d","064404":"111d","622197":"111d","093549":"111d","247792":"111d","204628":"111d","689252":"111d","923508":"111d","316667":"111d","208403":"111d","608051":"111d","958240":"111d","684116":"111d","038349":"111d","011257":"111d","963233":"111d","190247":"111d","248316":"111d","262366":"111d","236231":"111d","264120":"111d","280192":"111d","260854":"111d","695438":"111d","016595":"111d","448416":"111d","345581":"111d","304197":"111d","347979":"111d","472550":"111d","655565":"111d","499564":"111d","195656":"111d","713831":"111d","125218":"111d","754098":"111d","090195":"111d","813412":"111d","287805":"111d","819078":"111d","576457":"111d","051659":"111d","880231":"111d","438414":"111d","825739":"111d","676345":"111d","109090":"111d","786780":"111d","364547":"111d","976630":"111d","568696":"111d","100175":"111d","009590":"111d","666211":"111d","475442":"111d","144060":"111d","595213":"111d","782809":"111d","906146":"111d","783910":"111d","474607":"111d","354422":"111d","420578":"111d","630700":"111d","991697":"111d","210246":"111d","729383":"111d","234464":"111d","845147":"111d","498091":"111d","206095":"111d","299434":"111d","173515":"111d","351575":"111d","003971":"111d","462129":"111d","467471":"111d","798552":"111d","637880":"111d","777749":"111d","255440":"111d","846431":"111d","000404":"111d","625546":"111d","821694":"111d","912230":"111d","454502":"111d","900190":"111d","711036":"111d","843857":"111d","018850":"111d","150205":"111d","339018":"111d","022551":"111d","246058":"111d","764907":"111d","928611":"111d","704273":"111d","075090":"111d","336678":"111d","476676":"111d","276838":"111d","127762":"111d","462498":"111d","938080":"111d","499269":"111d","352640":"111d","128183":"111d","579397":"111d","208086":"111d","319744":"111d","847581":"111d","792623":"111d","517460":"111d","287379":"111d","210943":"111d","317583":"111d","130746":"111d","493343":"111d","323658":"111d","737138":"111d","237693":"111d","184891":"111d","704171":"111d","333491":"111d","597839":"111d","113414":"111d","494360":"111d","662166":"111d","243186":"111d","054215":"111d","255056":"111d","782783":"111d","758911":"111d","012453":"111d","297193":"111d","242598":"111d","072899":"111d","030900":"111d","960362":"111d","693923":"111d","111765":"111d","172336":"111d","978293":"111d","264917":"111d","775164":"111d","669993":"111d","841737":"111d","808862":"111d","865455":"111d","594860":"111d","329160":"111d","019730":"111d","012481":"111d","557609":"111d","701560":"111d","518203":"111d","844828":"111d","251651":"111d","250605":"111d","696285":"111d","840066":"111d","141620":"111d","485536":"111d","384441":"111d","441248":"111d","863678":"111d","408155":"111d","478954":"111d","327157":"111d","862595":"111d","603586":"111d","967699":"111d","385141":"111d","490293":"111d","558347":"111d","065941":"111d","963003":"111d","914230":"111d","563735":"111d","097799":"111d","742805":"111d","649220":"111d","882442":"111d","619527":"111d","451699":"111d","865187":"111d","830862":"111d","601390":"111d","254891":"111d","532051":"111d","707870":"111d","745081":"111d","835866":"111d","054624":"111d","809281":"111d","436451":"111d","491573":"111d","172327":"111d","342637":"111d","724929":"111d","379363":"111d","339353":"111d","778893":"111d","400889":"111d","692853":"111d","397612":"111d","910421":"111d","417252":"111d","529969":"111d","449105":"111d","386575":"111d","795391":"111d","399078":"111d","419969":"111d","841741":"111d","447128":"111d","955007":"111d","739157":"111d","029757":"111d","578933":"111d","376564":"111d","104276":"111d","246129":"111d","851844":"111d","393222":"111d","675966":"111d","850359":"111d","651943":"111d","862753":"111d","177043":"111d","707034":"111d","364268":"111d","811944":"111d","440559":"111d","158318":"111d","625466":"111d","722638":"111d","393047":"111d","238238":"111d","066146":"111d","028511":"111d","569408":"111d","015845":"111d","774831":"111d","941563":"111d","254920":"111d","130556":"111d","345491":"111d","702323":"111d","507944":"111d","732861":"111d","837232":"111d","431177":"111d","782007":"111d","771089":"111d","154499":"111d","848042":"111d","453283":"111d","196781":"111d","239925":"111d","180095":"111d","866557":"111d","369864":"111d","035454":"111d","269581":"111d","830942":"111d","347492":"111d","224810":"111d","418827":"111d","207391":"111d","701648":"111d","225228":"111d","272086":"111d","654220":"111d","449559":"111d","131786":"111d","004962":"111d","165626":"111d","291676":"111d","794072":"111d","704242":"111d","191922":"111d","267541":"111d","275292":"111d","109982":"111d","791575":"111d","672929":"111d","995832":"111d","681951":"111d","905490":"111d","058844":"111d","545209":"111d","019394":"111d","243238":"111d","591537":"111d","892374":"111d","000365":"111d","506584":"111d","682391":"111d","854391":"111d","603000":"111d","489928":"111d","120619":"111d","188877":"111d","534857":"111d","608757":"111d","119571":"111d","977810":"111d","336455":"111d","839497":"111d","693798":"111d","131144":"111d","678376":"111d","717148":"111d","655608":"111d","919988":"111d","144684":"111d","793433":"111d","911798":"111d","631702":"111d","905452":"111d","997307":"111d","697775":"111d","335597":"111d","572192":"111d","095387":"111d","349373":"111d","488576":"111d","499577":"111d","608795":"111d","488318":"111d","913020":"111d","180680":"111d","374869":"111d","327355":"111d","350497":"111d","660726":"111d","207060":"111d","733755":"111d","607533":"111d","187676":"111d","389660":"111d","282792":"111d","959824":"111d","327439":"111d","708565":"111d","860900":"111d","127107":"111d","113405":"111d","130252":"111d","099223":"111d","600483":"111d","479751":"111d","057858":"111d","815997":"111d","729128":"111d","782717":"111d","757250":"111d","796333":"111d","308126":"111d","853134":"111d","711319":"111d","822966":"111d","497039":"111d","478967":"111d","859136":"111d","421040":"111d","551567":"111d","484219":"111d","552253":"111d","768488":"111d","408961":"111d","015725":"111d","657476":"111d","133310":"111d","453332":"111d","864382":"111d","557690":"111d","310214":"111d","793915":"111d","551888":"111d","403803":"111d","770242":"111d","391591":"111d","201615":"111d","480271":"111d","187497":"111d","564132":"111d","823971":"111d","604699":"111d","957288":"111d","208494":"111d","484415":"111d","119508":"111d","748471":"111d","463404":"111d","275334":"111d","241398":"111d","314064":"111d","428462":"111d","203963":"111d","433548":"111d","169601":"111d","583426":"111d","574937":"111d","575754":"111d","012220":"111d","367247":"111d","443875":"111d","607925":"111d","625151":"111d","231369":"111d","665792":"111d","567251":"111d","711834":"111d","721631":"111d","346199":"111d","562792":"111d","967569":"111d","924240":"111d","904585":"111d","467579":"111d","550260":"111d","763514":"111d","851886":"111d","811130":"111d","517398":"111d","804264":"111d","764500":"111d","361536":"111d","598470":"111d","096408":"111d","865435":"111d","587208":"111d","904974":"111d","234954":"111d","536258":"111d","903860":"111d","559725":"111d","744997":"111d","489824":"111d","677774":"111d","399331":"111d","197022":"111d","834993":"111d","518914":"111d","769890":"111d","559864":"111d","102801":"111d","020022":"111d","474885":"111d","269165":"111d","874519":"111d","008729":"111d","442878":"111d","163893":"111d","973622":"111d","028869":"111d","490304":"111d","512268":"111d","774288":"111d","126169":"111d","847267":"111d","389100":"111d","298388":"111d","069798":"111d","677306":"111d","309051":"111d","435046":"111d","566082":"111d","812946":"111d","767615":"111d","065670":"111d","672791":"111d","460891":"111d","694170":"111d","468804":"111d","558395":"111d","876087":"111d","854648":"111d","743813":"111d","900144":"111d","767620":"111d","437972":"111d","251756":"111d","884442":"111d","550298":"111d","424868":"111d","820213":"111d","804090":"111d","159989":"111d","358078":"111d","982651":"111d","823844":"111d","906564":"111d","459634":"111d","575099":"111d","761866":"111d","773163":"111d","434355":"111d","674168":"111d","712373":"111d","795141":"111d","136874":"111d","793167":"111d","601647":"111d","859194":"111d","873922":"111d","499945":"111d","309510":"111d","712303":"111d","310825":"111d","728783":"111d","768053":"111d","766553":"111d","627376":"111d","385697":"111d","427559":"111d","117144":"111d","208089":"111d","036462":"111d","249092":"111d","159241":"111d","442841":"111d","874057":"111d","318543":"111d","090123":"111d","374318":"111d","452098":"111d","620421":"111d","869747":"111d","531614":"111d","753400":"111d","459660":"111d","139551":"111d","163782":"111d","464800":"111d","904261":"111d","806929":"111d","612277":"111d","584757":"111d","372547":"111d","538191":"111d","330873":"111d","235752":"111d","830419":"111d","166216":"111d","001841":"111d","253721":"111d","565210":"111d","226576":"111d","215731":"111d","274700":"111d","514052":"111d","991422":"111d","282509":"111d","315725":"111d","994932":"111d","092348":"111d","270493":"111d","051395":"111d","648513":"111d","632373":"111d","159038":"111d","661228":"111d","430732":"111d","580831":"111d","171954":"111d","808720":"111d","384841":"111d","263230":"111d","329962":"111d","599381":"111d","383408":"111d","289933":"111d","187650":"111d","380583":"111d","367001":"111d","857710":"111d","772218":"111d","342318":"111d","964979":"111d","741948":"111d","370151":"111d","020822":"111d","507408":"111d","120172":"111d","927096":"111d","657736":"111d","561036":"111d","818224":"111d","606929":"111d","540648":"111d","085143":"111d","649205":"111d","482976":"111d","072779":"111d","408843":"111d","386492":"111d","986933":"111d","414585":"111d","804414":"111d","407684":"111d","300577":"111d","948978":"111d","341629":"111d","079532":"111d","017127":"111d","692298":"111d","668947":"111d","828954":"111d","670610":"111d","966126":"111d","243033":"111d","890378":"111d","400813":"111d","426564":"111d","019676":"111d","410975":"111d","184062":"111d","920898":"111d","058523":"111d","062449":"111d","583511":"111d","055696":"111d","044912":"111d","870789":"111d","921768":"111d","340039":"111d","176665":"111d","873697":"111d","288545":"111d","913755":"111d","964214":"111d","594617":"111d","700451":"111d","381703":"111d","072701":"111d","571071":"111d","312870":"111d","948915":"111d","666149":"111d","219712":"111d","186761":"111d","194153":"111d","870623":"111d","666725":"111d","831706":"111d","551724":"111d","237661":"111d","468063":"111d","792541":"111d","596892":"111d","701523":"111d","705008":"111d","356249":"111d","242248":"111d","497289":"111d","811061":"111d","245748":"111d","182129":"111d","736313":"1y","386331":"1y","590661":"1y","657284":"1y","027413":"1y","205310":"1y","975062":"1y","299002":"1y","154106":"1y","518538":"1y","476107":"1y","911706":"1y","414052":"1y","834323":"1y","850189":"1y","128629":"1y","442963":"1y","350711":"1y","154523":"1y","162849":"1y","216269":"1y","288484":"1y","538761":"1y","764032":"1y","864510":"1y","237884":"1y","778755":"1y","481805":"1y","375923":"1y","581323":"1y","771959":"1y","360573":"1y","263574":"1y","339327":"1y","890114":"1y","381327":"1y","135786":"1y","291037":"1y","157918":"1y","836050":"1y","018335":"1y","157152":"1y","545653":"1y","862285":"1y","589782":"1y","628944":"1y","283408":"1y","483177":"1y","553444":"1y","185994":"1y","729390":"1y","732716":"1y","222573":"1y","623759":"1y","561854":"1y","090865":"1y","272784":"1y","458647":"1y","914296":"1y","246341":"1y","787581":"1y","642822":"1y","937256":"1y","628844":"1y","515091":"1y","893958":"1y","160338":"1y","691026":"1y","837845":"1y","694085":"1y","143513":"1y","012479":"1y","250494":"1y","427231":"1y","176351":"1y","403503":"1y","980859":"1y","689441":"1y","568506":"1y","857843":"1y","856338":"1y","704325":"1y","106746":"1y","797336":"1y","000042":"1y","475306":"1y","132324":"1y","105949":"1y","096843":"1y","070004":"1y","739447":"1y","043714":"1y","681552":"1y","044704":"1y","242670":"1y","709048":"1y","325974":"1y","832781":"1y","220547":"1y","525392":"1y","553046":"1y","082416":"1y","976428":"1y","218482":"1y","677834":"1y","243580":"1y","778744":"1y","452059":"1y","645932":"1y","212766":"1y","613850":"1y","118566":"1y","992025":"1y","379639":"1y","947071":"1y","151371":"1y","462043":"1y","159979":"1y","638103":"1y","288521":"1y","154504":"1y","061799":"1y","054110":"1y","321983":"1y","330790":"1y","868567":"1y","846324":"1y","755661":"1y","057175":"1y","578923":"1y","874772":"1y","345245":"1y","076776":"1y","802538":"1y","079318":"1y","673280":"1y","176398":"1y","012098":"1y","814336":"1y","622718":"1y","288436":"1y","934655":"1y","824123":"1y","875673":"1y","375621":"1y","943863":"1y","813937":"1y","172109":"1y","546574":"1y","518800":"1y","266193":"1y","880648":"1y","782794":"1y","464844":"1y","326719":"1y","592982":"1y","250360":"1y","493481":"1y","332479":"1y","703022":"1y","944876":"1y","364997":"1y","317648":"1y","136522":"1y","361333":"1y","529461":"1y","398982":"1y","383538":"1y","624590":"1y","406250":"1y","840402":"1y","910649":"1y","508669":"1y","813789":"1y","671449":"1y","921095":"1y","438503":"1y","705668":"1y","765359":"1y","615057":"1y","690627":"1y","531170":"1y","521941":"1y","768008":"1y","098956":"1y","712004":"1y","112253":"1y","294339":"1y","992745":"1y","854109":"1y","972825":"1y","195629":"1y","998347":"1y","268900":"1y","217038":"1y","481178":"1y","306243":"1y","011450":"1y","491215":"1y","957235":"1y","820479":"1y","003729":"1y","147440":"1y","764559":"1y","087958":"1y","581550":"1y","627335":"1y","168795":"1y","827450":"1y","828278":"1y","357427":"1y","370484":"1y","696072":"1y","158458":"1y","188255":"1y","106213":"1y","040534":"1y","577852":"1y","141794":"1y","089738":"1y","096018":"1y","747707":"1y","677357":"1y","154708":"1y","841026":"1y","602047":"1y","476897":"1y","712928":"1y","333142":"1y","738377":"1y","937146":"1y","062983":"1y","725266":"1y","602135":"1y","632914":"1y","184848":"1y","623394":"1y","206139":"1y","409465":"1y","694317":"1y","615567":"1y","080434":"1y","667201":"1y","102453":"1y","987609":"1y","120830":"1y","626838":"1y","212649":"1y","828935":"1y","855866":"1y","663338":"1y","111965":"1y","352835":"1y","255385":"1y","854287":"1y","376561":"1y","025154":"1y","497906":"1y","799221":"1y","909025":"1y","371800":"1y","084205":"1y","534179":"1y","556847":"1y","524782":"1y","970855":"1y","477689":"1y","343339":"1y","415954":"1y","927093":"1y","517129":"1y","550655":"1y","755950":"1y","120371":"1y","677395":"1y","523977":"1y","184591":"1y","435706":"1y","314997":"1y","101633":"1y","072416":"1y","809690":"1y","372946":"1y","676118":"1y","172058":"1y","810177":"1y","921738":"1y","874279":"1y","796845":"1y","474255":"1y","968251":"1y","561414":"1y","244851":"1y","702789":"1y","980491":"1y","710565":"1y","298692":"1y","526956":"1y","234034":"1y","013107":"1y","793614":"1y","563131":"1y","073153":"1y","144860":"1y","378779":"1y","588952":"1y","912687":"1y","273087":"1y","644465":"1y","907560":"1y","463658":"1y","060325":"1y","098233":"1y","652719":"1y","775557":"1y","189364":"1y","945339":"1y","991083":"1y","463898":"1y","736455":"1y","911196":"1y","279889":"1y","312924":"1y","959527":"1y","966636":"1y","497918":"1y","317620":"1y","680435":"1y","547329":"1y","465846":"1y","728530":"1y","686238":"1y","981558":"1y","144352":"1y","637485":"1y","660318":"1y","624707":"1y","719289":"1y","194612":"1y","583552":"1y","606322":"1y","879081":"1y","882541":"1y","470139":"1y","717684":"1y","568769":"1y","794056":"1y","240454":"1y","074741":"1y","382513":"1y","967538":"1y","572234":"1y","044328":"1y","335184":"1y","494257":"1y","007786":"1y","948376":"1y","873079":"1y","727436":"1y","084700":"1y","685218":"1y","745362":"1y","991657":"1y","412078":"1y","246997":"1y","180281":"1y","098642":"1y","526518":"1y","200427":"1y","539000":"1y","388646":"1y","198794":"1y","593708":"1y","556008":"1y","073895":"1y","378497":"1y","733392":"1y","683065":"1y","210264":"1y","773560":"1y","541132":"1y","248274":"1y","907611":"1y","306576":"1y","179556":"1y","011354":"1y","124093":"1y","981066":"1y","628084":"1y","661890":"1y","242931":"1y","144984":"1y","934796":"1y","435932":"1y","994681":"1y","267082":"1y","905001":"1y","140682":"1y","440515":"1y","201431":"1y","070760":"1y","756936":"1y","183482":"1y","152758":"1y","378335":"1y","774569":"1y","299207":"1y","044286":"1y","176463":"1y","090373":"1y","525490":"1y","311480":"1y","973209":"1y","233674":"1y","691569":"1y","282491":"1y","465455":"1y","863761":"1y","786948":"1y","678439":"1y","533301":"1y","490462":"1y","698836":"1y","279924":"1y","375375":"1y","666679":"1y","920802":"1y","431663":"1y","396878":"1y","855332":"1y","328652":"1y","512921":"1y","475210":"1y","894793":"1y","562233":"1y","062134":"1y","950034":"1y","228658":"1y","162423":"1y","304408":"1y","206986":"1y","228259":"1y","415756":"1y","190338":"1y","348075":"1y","195783":"1y","947181":"1y","299840":"1y","330801":"1y","386938":"1y","261161":"1y","706747":"1y","033896":"1y","113650":"1y","818072":"1y","702704":"1y","628106":"1y","619148":"1y","305321":"1y","984142":"1y","862765":"1y","551928":"1y","020673":"1y","927449":"1y","190145":"1y","472660":"1y","572660":"1y","030986":"1y","541415":"1y","257747":"1y","672653":"1y","698314":"1y","461909":"1y","038789":"1y","944273":"1y","934129":"1y","784225":"1y","000685":"1y","490433":"1y","192623":"1y","558477":"1y","584432":"1y","913380":"1y","424792":"1y","736429":"1y","873109":"1y","981320":"1y","894921":"1y","629596":"1y","545167":"1y","706400":"1y","330146":"1y","768182":"1y","047225":"1y","044121":"1y","285226":"1y","161175":"1y","816814":"1y","226094":"1y","058892":"1y","040780":"1y","820372":"1y","216893":"1y","955221":"1y","690950":"1y","372062":"1y","599759":"1y","702201":"1y","083829":"1y","191326":"1y","949380":"1y","960611":"1y","011237":"1y","821915":"1y","056334":"1y","107187":"1y","248406":"1y","030579":"1y","094915":"1y","617881":"1y","667978":"1y","646646":"1y","799326":"1y","351244":"1y","641119":"1y","921793":"1y","721656":"1y","060980":"1y","358527":"1y","738264":"1y","394631":"1y","228178":"1y","671388":"1y","797178":"1y","687096":"1y","552519":"1y","252182":"1y","911856":"1y","263756":"1y","908223":"1y","249411":"1y","899438":"1y","277955":"1y","277178":"1y","702989":"1y","457300":"1y","747826":"1y","292110":"1y","932566":"1y","710601":"1y","816872":"1y","833808":"1y","624621":"1y","440641":"1y","226933":"1y","189280":"1y","299104":"1y","686078":"1y","079604":"1y","570173":"1y","061814":"1y","002391":"1y","719119":"1y","617978":"1y","027787":"1y","015954":"1y","991636":"1y","075789":"1y","465677":"1y","563714":"1y","655539":"1y","923103":"1y","781129":"1y","624845":"1y","199806":"1y","232069":"1y","646458":"1y","086300":"1y","174951":"1y","258944":"1y","153813":"1y","508752":"1y","438485":"1y","462668":"1y","930447":"1y","843235":"1y","990993":"1y","366919":"1y","137410":"1y","596604":"1y","685450":"1y","245880":"1y","190779":"1y","750898":"1y","646793":"1y","595667":"1y","137414":"1y","296708":"1y","590558":"1y","788827":"1y","424096":"1y","317455":"1y","812480":"1y","614592":"1y","169243":"1y","042011":"1y","284444":"1y","293696":"1y","316458":"1y","821674":"1y","010219":"1y","428873":"1y","330939":"1y","482453":"1y","459919":"1y","753938":"1y","894758":"1y","831145":"1y","620436":"1y","450751":"1y","483269":"1y","291473":"1y","518988":"1y","014252":"1y","409718":"1y","925017":"1y","245242":"1y","224940":"1y","821075":"1y","135333":"1y","985721":"1y","480482":"1y","837700":"1y","619703":"1y","515971":"1y","186024":"1y","474616":"1y","323073":"1y","160013":"1y","406325":"1y","012346":"1y","709888":"1y","098109":"1y","032109":"1y","479795":"1y","226522":"1y","164364":"1y","812529":"1y","168624":"1y","277298":"1y","312249":"1y","147149":"1y","673325":"1y","422410":"1y","643083":"1y","057329":"1y","099935":"1y","098692":"1y","642271":"1y","222628":"1y","392717":"1y","816074":"1y","942173":"1y","374548":"1y","263726":"1y","151776":"1y","506410":"1y","713474":"1y","167683":"1y","724042":"1y","289632":"1y","911633":"1y","261096":"1y","319499":"1y","762044":"1y","646615":"1y","358124":"1y","862768":"1y","390917":"1y","078748":"1y","380143":"1y","761614":"1y","662357":"1y","632811":"1y","855526":"1y","288455":"1y","728837":"1y","477384":"1y","785693":"1y","289772":"1y","795560":"1y","279577":"1y","371000":"1y","532142":"1y","444306":"1y","801161":"1y","451901":"1y","538101":"1y","136123":"1y","809623":"1y","117300":"1y","861625":"1y","962187":"1y","106671":"1y","105724":"1y","859528":"1y","981208":"1y","975972":"1y","662045":"1y","387331":"1y","974923":"1y","264115":"1y","471074":"1y","244802":"1y","557709":"1y","068763":"1y","207843":"1y","402932":"1y","953325":"1y","033548":"1y","663003":"1y","273620":"1y","376922":"1y","691194":"1y","044422":"1y","997467":"1y","700048":"1y","921323":"1y","283971":"1y","322655":"1y","771954":"1y","259539":"1y","491811":"1y","197198":"1y","760542":"1y","437128":"1y","623604":"1y","913617":"1y","453576":"1y","746612":"1y","046573":"1y","717202":"1y","317937":"1y","845219":"1y","413497":"1y","426255":"1y","279054":"1y","113951":"1y","477268":"1y","351698":"1y","696777":"1y","788205":"1y","933237":"1y","995683":"1y","069384":"1y","692843":"1y","200317":"1y","429692":"1y","523846":"1y","479112":"1y","030529":"1y","122301":"1y","556374":"1y","742152":"1y","858930":"1y","591998":"1y","809941":"1y","849754":"1y","333554":"1y","378934":"1y","581611":"1y","076473":"1y","989336":"1y","084212":"1y","119914":"1y","334925":"1y","898982":"1y","469462":"1y","418297":"1y","604617":"1y","768819":"1y","247858":"1y","816608":"1y","386481":"1y","102082":"1y","157163":"1y","217014":"1y","424524":"1y","609190":"1y","565997":"1y","339286":"1y","620743":"1y","051584":"1y","975718":"1y","243316":"1y","529906":"1y","712507":"1y","208515":"1y","457220":"1y","055886":"1y","414864":"1y","494785":"1y","056673":"1y","299932":"1y","466254":"1y","987560":"1y","252110":"1y","681154":"1y","008203":"1y","874483":"1y","740017":"1y","766433":"1y","196163":"1y","558166":"1y","482003":"1y","640102":"1y","134940":"1y","261465":"1y","581381":"1y","494267":"1y","387425":"1y","386198":"1y","619482":"1y","591548":"1y","304249":"1y","724511":"1y","969975":"1y","848757":"1y","108662":"1y","439383":"1y","152332":"1y","596637":"1y","788354":"1y","886782":"1y","530980":"1y","669751":"1y","822335":"1y","493070":"1y","954249":"1y","145264":"1y","684556":"1y","834299":"1y","230498":"1y","724889":"1y","860820":"1y","058301":"1y","956875":"1y","953408":"1y","382047":"1y","255306":"1y","887470":"1y","562246":"1y","474770":"1y","691094":"1y","045508":"1y","026167":"1y","408141":"1y","454406":"1y","639571":"1y","219751":"1y","562159":"1y","122573":"1y","917228":"1y","134304":"1y","865913":"1y","036690":"1y","317544":"1y","128850":"1y","933882":"1y","482742":"1y","536274":"1y","248371":"1y","144561":"1y","621004":"1y","600930":"1y","508318":"1y","587145":"1y","013602":"1y","097308":"1y","654803":"1y","794617":"1y","782119":"1y","975177":"1y","902547":"1y","897501":"1y","664664":"1y","075937":"1y","201484":"1y","804959":"1y","884601":"1y","498347":"1y","031997":"1y","567115":"1y","122654":"1y","376795":"1y","566321":"1y","282881":"1y","786137":"1y","759118":"1y","849301":"1y","831405":"1y","633624":"1y","430422":"1y","558802":"1y","731361":"1y","529645":"1y","051888":"1y","071431":"1y","645545":"1y","919204":"1y","393619":"1y","678647":"1y","789829":"1y","751047":"1y","636166":"1y","212915":"1y","653964":"1y","113241":"1y","548522":"1y","264998":"1y","403613":"1y","331837":"1y","471438":"1y","714949":"1y","354228":"1y","750426":"1y","006350":"1y","068741":"1y","124842":"1y","304016":"1y","154946":"1y","271607":"1y","036454":"1y","477699":"1y","055590":"1y","710407":"1y","883090":"1y","700654":"1y","630072":"1y","972520":"1y","620010":"1y","560662":"1y","500319":"1y","299359":"1y","557966":"1y","864348":"1y","066219":"1y","598759":"1y","359856":"1y","871710":"1y","152488":"1y","450279":"1y","914017":"1y","267991":"1y","945835":"1y","410663":"1y","669140":"1y","863240":"1y","816779":"1y","563448":"1y","628012":"1y","922026":"1y","923232":"1y","003433":"1y","300899":"1y","245155":"1y","649993":"1y","039843":"1y","977191":"1y","526447":"1y","640118":"1y","304615":"1y","302696":"1y","601382":"1y","651117":"1y","323267":"1y","683654":"1y","965414":"1y","555815":"1y","946773":"1y","231149":"1y","347753":"1y","974875":"1y","461404":"1y","046301":"1y","139805":"1y","234167":"1y","774489":"1y","312679":"1y","990733":"1y","069361":"1y","216868":"1y","904341":"1y","744115":"1y","038975":"1y","228547":"1y","351097":"1y","285020":"1y","233132":"1y","643505":"1y"};
+
+let attachedFile = null;
+const STORAGE_KEY = 'ai_mind_img_v3';
+const THEME_KEY = 'ai_mind_theme_v3';
+
+function refreshPremiumState(){
+  premiumUntil = Number(safeGet('ai_mind_premium_until_v6_test') || 0);
+  premiumPlan = safeGet('ai_mind_premium_plan_v6_test') || '';
+  premiumActive = premiumUntil > Date.now();
+  if(!premiumActive && premiumUntil){
+    safeRemove('ai_mind_premium_until_v6_test');
+    safeRemove('ai_mind_premium_plan_v6_test');
+    premiumUntil = 0; premiumPlan = '';
+  }
+  updateCredits(); updateActivePremiumBox();
+}
+function addDuration(base, plan){
+  const d = new Date(base);
+  if(plan==='24h') d.setHours(d.getHours()+24);
+  if(plan==='51h') d.setHours(d.getHours()+51);
+  if(plan==='1m') d.setMonth(d.getMonth()+1);
+  if(plan==='99d') d.setDate(d.getDate()+99);
+  if(plan==='5m') d.setMonth(d.getMonth()+5);
+  if(plan==='111d') d.setDate(d.getDate()+111);
+  if(plan==='1y') d.setFullYear(d.getFullYear()+1);
+  return d.getTime();
+}
+function updateActivePremiumBox(){
+  const crown=document.getElementById('premiumCrown');
+  if(crown) crown.style.display = premiumActive ? 'inline' : 'none';
+  const box=document.getElementById('activePremiumBox');
+  if(!box)return;
+  if(premiumActive){
+    box.style.display='block';
+    box.innerHTML='👑 <b>Premium Active</b> — '+escapeHtml(PLAN_NAMES[premiumPlan]||'Premium')+'<br><span style="color:var(--sub)">Expires: '+new Date(premiumUntil).toLocaleString()+'</span>';
+  } else box.style.display='none';
+}
+function updateCredits(){
+  refreshPremiumStateGuard();
+  if(creditDisplay) creditDisplay.textContent = premiumActive ? '∞ • PRO+' : imageCredits;
+}
+function refreshPremiumStateGuard(){
+  premiumActive = Number(safeGet('ai_mind_premium_until_v6_test')||0) > Date.now();
+  premiumUntil = Number(safeGet('ai_mind_premium_until_v6_test')||0);
+  premiumPlan = safeGet('ai_mind_premium_plan_v6_test')||'';
+}
+function selectPremiumPlan(plan, button){
+  refreshPremiumState();
+  if(premiumActive){
+    document.getElementById('codeStatus').textContent='Premium is already active. Wait until it expires before activating another package.';
+    document.getElementById('codeArea').classList.add('show');
+    return;
+  }
+  selectedPremiumPlan=plan;
+  document.getElementById('selectedPlanText').textContent=PLAN_NAMES[plan];
+  document.getElementById('nextPlanWrap').classList.add('show');
+  document.getElementById('premiumEmailForm').classList.remove('show');
+  document.getElementById('codeArea').classList.remove('show');
+  document.getElementById('codeStatus').textContent='';
+  document.getElementById('emailPlanPrompt').textContent='If you want to take '+PLAN_NAMES[plan]+', send an email to '+PREMIUM_GMAIL+'. Your selected package will be included automatically.';
+  document.querySelectorAll('.plan').forEach(el=>el.style.outline='');
+  if(button && button.closest('.plan')) button.closest('.plan').style.outline='2px solid #a855f7';
+}
+function showCodeEntry(){
+  if(!selectedPremiumPlan){alert('Please select a Premium package first.');return;}
+  document.getElementById('premiumEmailForm').classList.remove('show');
+  document.getElementById('codeArea').classList.add('show');
+  document.getElementById('selectedPlanText').textContent=PLAN_NAMES[selectedPremiumPlan];
+  document.getElementById('codeStatus').textContent='Enter the code you received for this exact package.';
+  document.getElementById('premiumCodeInput').focus();
+}
+function showPremiumEmailForm(){
+  if(!selectedPremiumPlan){alert('Please select a Premium package first.');return;}
+  document.getElementById('premiumEmailForm').classList.add('show');
+  document.getElementById('emailPlanPrompt').textContent='If you want to take '+PLAN_NAMES[selectedPremiumPlan]+', then send mail to '+PREMIUM_GMAIL+'.';
+  document.getElementById('customerMessage').value='Hello, I want to take the '+PLAN_NAMES[selectedPremiumPlan]+' package. Please tell me how to get my Premium code.';
+  document.getElementById('customerEmail').focus();
+}
+function sendPremiumRequestEmail(){
+  if(!selectedPremiumPlan){alert('Please select a Premium package first.');return;}
+  const from=document.getElementById('customerEmail').value.trim();
+  if(!from || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(from)){alert('Please enter a valid Gmail/email address in the From field.');return;}
+  const message=document.getElementById('customerMessage').value.trim() || 'Please tell me how to get my Premium code.';
+  const subject='AI MIND PRO Premium Request - '+PLAN_NAMES[selectedPremiumPlan];
+  const body='From (my email): '+from+'\nTo: '+PREMIUM_GMAIL+'\nSelected package: '+PLAN_NAMES[selectedPremiumPlan]+'\n\nMessage:\n'+message;
+  const gmailCompose='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(PREMIUM_GMAIL)+'&su='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  // Open Gmail's web compose page instead of relying on a device mailto handler.
+  const gmailWindow=window.open(gmailCompose,'_blank','noopener,noreferrer');
+  if(!gmailWindow){
+    window.location.href=gmailCompose;
+  }
+}
+function startCodeTimerOnInput(){
+  const input=document.getElementById('premiumCodeInput');
+  input.oninput=()=>{
+    if(input.value.trim() && !codeFirstEnteredAt){
+      codeFirstEnteredAt=Date.now();
+      updateCodeTimer();
+      premiumTimer=setInterval(updateCodeTimer,250);
+    }
+  };
+}
+document.getElementById('premiumCodeInput').addEventListener('input', function(){
+  if(this.value.trim() && !codeFirstEnteredAt){
+    codeFirstEnteredAt=Date.now();
+    updateCodeTimer();
+    premiumTimer=setInterval(updateCodeTimer,250);
+  }
+  if(!this.value.trim()){
+    codeFirstEnteredAt=0;
+    if(premiumTimer){clearInterval(premiumTimer);premiumTimer=null;}
+    document.getElementById('codeStatus').textContent='';
+  }
+});
+function updateCodeTimer(){
+  const status=document.getElementById('codeStatus'); if(!status)return;
+  if(!codeFirstEnteredAt)return;
+  const left=Math.max(0,21000-(Date.now()-codeFirstEnteredAt));
+  if(left<=0){clearInterval(premiumTimer); status.innerHTML='<span class="timer">Code expired. Request a new code.</span>'; return;}
+  status.innerHTML='Code activation window: <span class="timer">'+(left/1000).toFixed(1)+' seconds</span>';
+}
+function clearPremiumCode(){
+  selectedPremiumPlan=''; codeFirstEnteredAt=0; clearInterval(premiumTimer); premiumTimer=null;
+  document.getElementById('codeArea').classList.remove('show');
+  document.getElementById('premiumCodeInput').value='';
+}
+function activatePremiumCode(){
+  refreshPremiumState();
+  const input=document.getElementById('premiumCodeInput');
+  const code=input.value.trim();
+  if(!selectedPremiumPlan){alert('Please select a Premium package first.');return;}
+  if(!code){document.getElementById('codeStatus').textContent='Please enter your code.';return;}
+  const status=document.getElementById('codeStatus');
+  // Check redemption history before checking current premium status, so a repeated code
+  // always receives the explicit single-use warning in this browser profile.
+  let used=[];
+  try { used=JSON.parse(safeGet('ai_mind_used_codes_v6_test')||'[]'); if(!Array.isArray(used)) used=[]; }
+  catch(e) { used=[]; }
+  if(used.includes(code)){
+    status.innerHTML='<span class="timer">❌ This code has already been used in this browser. Please request a new code.</span>';
+    return;
+  }
+  if(premiumActive){ alert('Premium is already active.'); return; }
+  if(!codeFirstEnteredAt || Date.now()-codeFirstEnteredAt>21000){
+    status.innerHTML='<span class="timer">❌ Code expired. Please request a new code.</span>'; return;
+  }
+  const assignedPlan=PREMIUM_CODES[code];
+  if(!assignedPlan){status.innerHTML='<span class="timer">❌ Your code is wrong. Please check the code and try again.</span>'; input.focus(); input.select(); return;}
+  if(assignedPlan!==selectedPremiumPlan){status.innerHTML='<span class="timer">❌ Wrong package! This code is for '+escapeHtml(PLAN_NAMES[assignedPlan])+', not '+escapeHtml(PLAN_NAMES[selectedPremiumPlan])+'.</span>';return;}
+  const until=addDuration(Date.now(), assignedPlan);
+  used.push(code);
+  safeSet('ai_mind_used_codes_v6_test',JSON.stringify(used));
+  safeSet('ai_mind_premium_until_v6_test',String(until));
+  safeSet('ai_mind_premium_plan_v6_test',assignedPlan);
+  premiumUntil=until; premiumPlan=assignedPlan; premiumActive=true; codeFirstEnteredAt=0; clearInterval(premiumTimer);
+  updateCredits(); updateActivePremiumBox();
+  document.getElementById('codeStatus').innerHTML='🎉 <b>Congratulations! You achieved your '+escapeHtml(PLAN_NAMES[assignedPlan])+' package!</b><br>Premium is now active until '+new Date(until).toLocaleString()+'.';
+  addMsg('🎉 Congratulations! You achieved your '+PLAN_NAMES[assignedPlan]+' package. Expires '+new Date(until).toLocaleString()+'.','ai');
+  setTimeout(closePremiumPanel,2200);
+}
+function resetPremiumTest(){
+  if(!confirm("Reset this browser's Premium test state? This clears the active Premium status and used demo codes on this device only.")) return;
+  safeRemove('ai_mind_premium_until_v6_test');
+  safeRemove('ai_mind_premium_plan_v6_test');
+  // Redeemed-code history is intentionally preserved; resetting Premium must not make codes reusable.
+  premiumUntil=0; premiumPlan=''; premiumActive=false; selectedPremiumPlan=''; codeFirstEnteredAt=0;
+  if(premiumTimer){clearInterval(premiumTimer);premiumTimer=null;}
+  document.getElementById('premiumCodeInput').value='';
+  document.getElementById('codeStatus').textContent='Test state reset. You can test a package again.';
+  document.getElementById('codeArea').classList.remove('show');
+  document.getElementById('premiumEmailForm').classList.remove('show');
+  document.getElementById('nextPlanWrap').classList.remove('show');
+  updateCredits(); updateActivePremiumBox();
+}
+function closePremiumPanel(){ premiumPanel.classList.remove('show'); }
+
+function loadTheme(){
+  let theme = safeGet(THEME_KEY) || 'dark';
+  if(theme==='light'){ document.body.classList.add('light'); themeBtn.textContent='🌙 Dark'; }
+  else { document.body.classList.remove('light'); themeBtn.textContent='☀️ Light'; }
+}
+themeBtn.onclick = ()=>{
+  document.body.classList.toggle('light');
+  let isLight = document.body.classList.contains('light');
+  safeSet(THEME_KEY, isLight?'light':'dark');
+  themeBtn.textContent = isLight ? '🌙 Dark' : '☀️ Light';
+};
+loadTheme();
+premiumBtn.onclick = ()=>{ refreshPremiumState(); premiumPanel.classList.add('show'); updateActivePremiumBox(); };
+closePremium.onclick = closePremiumPanel;
+premiumPanel.addEventListener('click', e=>{ if(e.target===premiumPanel) closePremiumPanel(); });
+refreshPremiumState();
+setInterval(refreshPremiumState,1000);
+
+
+const RECENT_KEY = 'ai_mind_recent_chats_v1';
+let activeChatId = 'chat_' + Date.now();
+function readRecentChats(){ try { return JSON.parse(safeGet(RECENT_KEY) || '[]'); } catch(e) { return []; } }
+function writeRecentChats(items){ safeSet(RECENT_KEY, JSON.stringify(items.slice(0,30))); }
+function makeChatTitle(html){
+  const temp=document.createElement('div'); temp.innerHTML=html;
+  const first=temp.querySelector('.user');
+  const title=(first?.innerText || first?.textContent || 'New Chat').trim().replace(/\s+/g,' ');
+  return title.length>42 ? title.slice(0,42)+'…' : title;
+}
+function historyPreview(html){
+  const temp=document.createElement('div'); temp.innerHTML=html;
+  const text=(temp.innerText || temp.textContent || '').replace(/\s+/g,' ').trim();
+  return text.length>110 ? text.slice(0,110)+'…' : (text || 'Conversation');
+}
+function historyDate(value){
+  try { return new Date(value || Date.now()).toLocaleString([], {day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}); }
+  catch(e){ return ''; }
+}
+function makeHistoryButton(item){
+  const b=document.createElement('button');
+  b.className='recent-item'+(item.id===activeChatId?' active':'');
+  b.type='button'; b.title='Open full conversation: '+(item.title||'New Chat');
+  const title=document.createElement('span'); title.className='history-title'; title.textContent=item.title||'New Chat';
+  const preview=document.createElement('span'); preview.className='history-preview'; preview.textContent=historyPreview(item.html||'');
+  const date=document.createElement('span'); date.className='history-date'; date.textContent=historyDate(item.updatedAt);
+  b.append(title,preview,date); b.onclick=()=>openSavedChat(item.id); return b;
+}
+function renderRecentChats(){
+  const side=document.getElementById('sideHistory');
+  const items=readRecentChats();
+  if(side){
+    side.innerHTML='';
+    if(!items.length){side.innerHTML='<div class="side-empty">Your chats will appear here.</div>';}
+    else items.forEach(item=>side.appendChild(makeHistoryButton(item)));
+  }
+}
+
+function saveHistory(){
+  const html=chatBox.innerHTML;
+  safeSet(STORAGE_KEY, html);
+  if(!html.trim()) return;
+  const items=readRecentChats();
+  const old=items.find(x=>x.id===activeChatId);
+  const entry={id:activeChatId,title:makeChatTitle(html),html,updatedAt:Date.now()};
+  const updated=[entry,...items.filter(x=>x.id!==activeChatId)];
+  writeRecentChats(updated); renderRecentChats();
+}
+function openSavedChat(id){
+  const item=readRecentChats().find(x=>x.id===id); if(!item) return;
+  const recentWrap=document.querySelector('.recent-wrap'); if(recentWrap) recentWrap.classList.remove('show'); const recentButton=document.getElementById('recentBtn'); if(recentButton) recentButton.setAttribute('aria-expanded','false');
+  activeChatId=item.id; chatBox.innerHTML=item.html || ''; 
+  safeSet(STORAGE_KEY,chatBox.innerHTML);
+  welcome.classList.add('hidden'); chatBox.classList.add('active');
+  bindImageButtons(); renderRecentChats(); chatBox.scrollTop=chatBox.scrollHeight;
+}
+function loadHistory(){
+  let saved = safeGet(STORAGE_KEY);
+  if(saved && saved.trim()!==''){
+    chatBox.innerHTML = saved;
+    welcome.classList.add('hidden'); chatBox.classList.add('active');
+    const current=readRecentChats().find(x=>x.html===saved);
+    if(current) activeChatId=current.id;
+    else { const items=readRecentChats(); const existing=items.find(x=>x.id===activeChatId); if(!existing) activeChatId='chat_'+Date.now(); saveHistory(); }
+    bindImageButtons();
+  }
+  renderRecentChats();
+}
+loadHistory();
+function startNewChat(){
+  const recentWrap=document.querySelector('.recent-wrap'); if(recentWrap) recentWrap.classList.remove('show'); const recentButton=document.getElementById('recentBtn'); if(recentButton) recentButton.setAttribute('aria-expanded','false');
+  if(chatBox.innerHTML.trim()) saveHistory();
+  activeChatId='chat_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  chatBox.innerHTML=''; chatBox.classList.remove('active'); welcome.classList.remove('hidden');
+  safeRemove(STORAGE_KEY); renderRecentChats(); userInput.focus();
+}
+if(clearBtn) clearBtn.onclick = startNewChat;
+const legacyRecentBtn=document.getElementById('recentBtn');
+if(legacyRecentBtn) legacyRecentBtn.onclick=()=>{const wrap=document.querySelector('.recent-wrap');if(wrap){const opened=wrap.classList.toggle('show');legacyRecentBtn.setAttribute('aria-expanded',String(opened));if(opened)renderRecentChats();}};
+const legacyClearRecent=document.getElementById('clearRecentBtn');
+if(legacyClearRecent) legacyClearRecent.onclick=()=>{if(!confirm('Delete all saved recent chats from this browser?'))return;safeRemove(RECENT_KEY);safeRemove(STORAGE_KEY);activeChatId='chat_'+Date.now();chatBox.innerHTML='';chatBox.classList.remove('active');welcome.classList.remove('hidden');renderRecentChats();};
+
+attachBtn.onclick = (e)=>{ e.stopPropagation(); attachMenu.classList.toggle('show'); };
+document.addEventListener('click', ()=> attachMenu.classList.remove('show'));
+
+document.querySelectorAll('.attach-item').forEach(item=>{
+  item.onclick = ()=>{
+    attachMenu.classList.remove('show');
+    let type = item.dataset.type;
+    if(type==='image') imgInput.click();
+    else if(type==='gen'){ 
+      let p = prompt('WHICH TYPE OF IMAGE YOU WANT TO MAKE? WRITE YOUR PROMPT:\nExample: cute dog in spacesuit');
+      if(p) generateAIImage(p);
+    }
+    else if(type==='video') videoInput.click();
+    else if(type==='camera') cameraInput.click();
+    else if(type==='file') fileInput.click();
+  };
+});
+
+function handleFile(file){
+  if(!file) return;
+  let reader = new FileReader();
+  reader.onload = (ev)=>{
+    attachedFile = { type: file.type, dataUrl: ev.target.result, name: file.name };
+    userInput.placeholder = `📎 ${file.name} - ab bolo iska kya karna hai?`;
+    welcome.classList.add('hidden');
+    chatBox.classList.add('active');
+    userInput.focus();
+  };
+  reader.readAsDataURL(file);
+}
+imgInput.onchange = e=> handleFile(e.target.files[0]);
+videoInput.onchange = e=> handleFile(e.target.files[0]);
+cameraInput.onchange = e=> handleFile(e.target.files[0]);
+fileInput.onchange = e=> handleFile(e.target.files[0]);
+
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.onclick = ()=>{
+    if(chip.dataset.type==='image') generateAIImage(chip.dataset.prompt);
+    else { userInput.value = chip.dataset.prompt; askAI(); }
+  };
+});
+
+function addMsg(html, type, isHtml=false){
+  welcome.classList.add('hidden');
+  chatBox.classList.add('active');
+  const div = document.createElement('div');
+  div.className = `msg ${type}`;
+  if(isHtml) div.innerHTML = html; else div.textContent = html;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  saveHistory();
+  return div;
+}
+
+function bindImageButtons(){
+  document.querySelectorAll('.download-btn').forEach(btn=>{
+    btn.onclick = ()=>{
+      let url = btn.dataset.url;
+      window.open(url,'_blank');
+    };
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>'"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
+}
+
+function normalizeImagePrompt(raw){
+  let p = String(raw || '').trim().replace(/\s+/g,' ');
+  let key = p.toLowerCase().replace(/[.,!?]+$/,'').trim();
+  const exact = {
+    'maharana pratap': 'Maharana Pratap, Rajput warrior king of Mewar, historically inspired royal Rajput armor, traditional turban, moustache, sword, horse, dignified heroic expression, Indian historical painting, accurate human anatomy, cinematic lighting, detailed face, no modern clothes, no fantasy character, no text',
+    'chhatrapati shivaji maharaj': 'Chhatrapati Shivaji Maharaj, Maratha king, historically inspired traditional Maratha royal attire, turban, sword, dignified expression, fort background, Indian historical painting, accurate face and anatomy, no modern clothes, no fantasy character, no text',
+    'lord ganesha': 'Lord Ganesha, respectful traditional Hindu devotional artwork, elephant-headed deity, four arms, traditional ornaments, seated peacefully, temple-like divine background, reverent Indian art style, no modern character, no text',
+    'ganesh': 'Lord Ganesha, respectful traditional Hindu devotional artwork, elephant-headed deity, traditional ornaments, seated peacefully, divine Indian temple background, reverent Indian art style, no modern character, no text'
+  };
+  return exact[key] || `${p}, exact subject, faithful interpretation of the requested subject, high detail, clean composition, accurate anatomy, no unrelated characters, no text, no watermark`;
+}
+
+function isLikelyImageRequest(text){
+  const p = String(text||'').trim();
+  if(!p) return false;
+  const l = p.toLowerCase();
+
+  // 1) Explicit image commands always generate an image.
+  if(/^(image:|generate image|\/image|banao image|photo banao)/i.test(p)) return true;
+
+  // 2) Natural-language image requests.
+  const imageWords = '(image|images|photo|photos|picture|pictures|wallpaper|portrait|drawing|illustration|poster|logo|artwork|pic|tasveer|tasvir|chitra|\u091a\u093f\u0924\u094d\u0930|\u0924\u0938\u094d\u0935\u0940\u0930|\u092b\u094b\u091f\u094b|\u0907\u092e\u0947\u091c)';
+  const actionWords = '(make|create|generate|draw|design|show|send|banao|bana do|banado|banaake|bana ke|chahiye|dikhao|dikhado|bhejo|\u092c\u0928\u093e\u0913|\u092c\u0928\u093e \u0926\u094b|\u092c\u0928\u093e\u0915\u0930|\u0926\u093f\u0916\u093e\u0913|\u092d\u0947\u091c\u094b)';
+  if(new RegExp('\\b'+imageWords+'\\b.*\\b'+actionWords+'\\b','i').test(l)) return true;
+  if(new RegExp('\\b'+actionWords+'\\b.*\\b'+imageWords+'\\b','i').test(l)) return true;
+
+  // 3) Only known subject names are allowed to trigger image generation by name alone.
+  // This prevents normal messages such as "hi i am shahil" from becoming images.
+  const directSubjects = [
+    'maharana pratap',
+    'chhatrapati shivaji maharaj',
+    'chhatrapati sambhaji maharaj',
+    'lord ganesha',
+    'ganesh',
+    'lord krishna',
+    'krishna',
+    'lord rama',
+    'shri ram',
+    'hanuman',
+    'sardar vallabhbhai patel',
+    'subhas chandra bose',
+    'bhagat singh',
+    'dr apj abdul kalam',
+    'albert einstein',
+    'taj mahal',
+    'red fort',
+    'india gate',
+    'cat',
+    'dog',
+    'lion',
+    'tiger',
+    'mountain',
+    'sunset',
+    'galaxy',
+    'universe'
+  ];
+  if(directSubjects.includes(l.replace(/[.,!?]+$/,'').trim())) return true;
+
+  // IMPORTANT: Do NOT treat every short sentence/name as an image request.
+  return false;
+}
+
+function generateAIImage(prompt){
+  let cleanPrompt = String(prompt || '').trim();
+  if(!cleanPrompt) cleanPrompt = 'beautiful digital artwork';
+  if(imageCredits <= 0 && !premiumActive){
+    addMsg('💎 Image credits khatam ho gaye. Premium button se demo credits activate kar sakte ho.', 'ai');
+    premiumPanel.classList.add('show');
+    return;
+  }
+  if(!premiumActive) imageCredits--;
+  safeSet('ai_mind_image_credits_v4', String(imageCredits));
+  updateCredits();
+
+  welcome.classList.add('hidden');
+  chatBox.classList.add('active');
+  addMsg(`🎨 ${cleanPrompt}`, 'user');
+  let seed = Math.floor(Math.random()*1000000);
+  let finalPrompt = normalizeImagePrompt(cleanPrompt);
+  let imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?seed=${seed}&width=1024&height=1024&nologo=true&enhance=true`;
+  let safeUrl = escapeHtml(imageUrl);
+  let safePrompt = escapeHtml(cleanPrompt);
+  let html = `
+    <div>🎨 <b>${safePrompt}</b></div>
+    <img src="${safeUrl}" class="gen-img" alt="AI Generated" onload="this.style.opacity=1" style="opacity:0;transition:opacity .5s" onerror="this.parentElement.innerHTML='❌ Image generate nahi hui. Dobara try karo.'">
+    <div class="img-actions">
+      <button class="download-btn" data-url="${safeUrl}">⬇️ Download</button>
+      <button onclick="navigator.clipboard.writeText('${imageUrl.replace(/'/g,"\\'")}'); alert('Link copied!')">🔗 Copy Link</button>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-top:6px">AI MIND PRO • ${premiumActive ? 'PRO+' : 'Free'} image generation</div>
+  `;
+  addMsg(html, 'ai', true);
+  bindImageButtons();
+}
+
+async function askAI(){
+  let prompt = userInput.value.trim();
+  if(!prompt && !attachedFile) return;
+
+  // SMART IMAGE INTENT: direct names like "Maharana Pratap" can generate an image without a long prompt.
+  if(isLikelyImageRequest(prompt)){
+    let imgPrompt = prompt.replace(/^(image:|generate image|\/image|banao image|photo banao)\s*/i,'').trim();
+    userInput.value='';
+    attachedFile=null;
+    imgInput.value=''; videoInput.value=''; cameraInput.value=''; fileInput.value='';
+    generateAIImage(imgPrompt || prompt);
+    return;
+  }
+
+  let userHtml = '';
+  if(prompt) userHtml += `<div>${prompt.replace(/</g,'&lt;')}</div>`;
+  if(attachedFile && attachedFile.dataUrl){
+    if(attachedFile.type.startsWith('image')) userHtml += `<img src="${attachedFile.dataUrl}">`;
+    else if(attachedFile.type.startsWith('video')) userHtml += `<video src="${attachedFile.dataUrl}" controls></video>`;
+  }
+  addMsg(userHtml || '📎 File', 'user', true);
+
+  let finalPrompt = prompt;
+  if(attachedFile) finalPrompt += ` [User uploaded ${attachedFile.name} - describe it if it's image]`;
+
+  userInput.value = '';
+  userInput.placeholder = "Ask anything or type 'image: cat' for AI image...";
+  attachedFile = null;
+  imgInput.value=''; videoInput.value=''; cameraInput.value=''; fileInput.value='';
+  sendBtn.disabled = true;
+
+  const aiMsg = addMsg('Thinking...', 'ai');
+
+  try{
+    // Handle this common question locally so the model cannot confuse Google's CEO with its founders.
+    const q = (finalPrompt || '').toLowerCase().replace(/[?!.]/g, '').trim();
+
+    // Correct common factual question and short follow-ups locally.
+    const mentionsRatanTata = /ratan tata/.test(q);
+    const asksRatanTataStatus = /(mar|maut|death|died|zinda|alive|kab|when|thee|tha|hai)/.test(q);
+    const confirmsRatanTataDeath = /^(wo|woh|vo|ratan tata ji)?\s*(mar gaye hain|mar gaye hai|mar gaye|died|passed away|what|kya)$/.test(q);
+    if (mentionsRatanTata && asksRatanTataStatus) {
+      aiMsg.textContent = 'Ratan Tata ji ka 9 October 2024 ko 86 saal ki umar mein dehant hua tha.';
+      return;
+    }
+    if (confirmsRatanTataDeath) {
+      aiMsg.textContent = 'Haan, Ratan Tata ji ka 9 October 2024 ko dehant hua tha. Pehle jawab mein galti hui thi—maaf kijiye.';
+      return;
+    }
+
+    const mentionsGoogle = /google|alphabet/.test(q);
+    const asksCEO = /\b(ceo|c e o|chief executive officer|chief executive|head of google)\b/.test(q);
+    const asksCOO = /\b(coo|chief operating officer|operating officer)\b/.test(q);
+    const ambiguousCO = mentionsGoogle && /\bco\b/.test(q) && !asksCEO && !asksCOO;
+    const isFollowupClarification = /\b(co puchha hai maine|maine co puchha|i asked (about )?the co|i asked co)\b/.test(q);
+    if (asksCOO && mentionsGoogle) {
+      aiMsg.textContent = 'Aap Google ke COO (Chief Operating Officer) ke baare mein pooch rahe hain. Mere paas is role ke current holder ki verified jaankari nahi hai.';
+      return;
+    }
+    if (ambiguousCO || isFollowupClarification) {
+      aiMsg.textContent = 'Aap Google ke CEO pooch rahe hain ya COO? CEO Sundar Pichai hain.';
+      return;
+    }
+    if (asksCEO && mentionsGoogle) {
+      aiMsg.textContent = 'Google ke CEO Sundar Pichai hain.';
+      return;
+    }
+    const systemPrompt = 'You are AI MIND PRO. Answer the exact question directly in simple, clear Hindi-English matching the user language. Never translate a user message when it is a correction or follow-up; use the previous conversation context and answer what they meant. Do not confuse CEOs with founders. Keep normal factual answers to 1-3 short sentences, usually under 35 words. Do not add unrelated details, long introductions, repeated explanations, or unnecessary headings. If asked who a person is or what a term means, give the direct answer first. If uncertain, say so briefly. If user uploaded an image, describe it only when relevant.';
+    const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}?model=openai&system=${encodeURIComponent(systemPrompt)}`, {method:'GET'});
+    const text = await res.text();
+    // Clean common Markdown markers so replies look clear in the chat UI.
+    const cleanText = (text || '')
+      .replace(/^#{1,6}\s+/gm, '')
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/`([^`]+)`/g, '$1')
+      .trim();
+    // Never display an empty JSON object as an AI answer.
+    if (!cleanText || /^\{\s*\}$/.test(cleanText) || /^(null|undefined)$/i.test(cleanText)) {
+      aiMsg.textContent = 'Hi! Main AI MIND PRO hu — bolo kya help chahiye?';
+    } else {
+      aiMsg.textContent = cleanText; if(window.__aimindSpeak) window.__aimindSpeak(cleanText);
+    }
+    
+    // If user uploaded image and asked to make it better, auto offer image gen
+    if(finalPrompt.toLowerCase().includes('banao') || finalPrompt.toLowerCase().includes('generate') || finalPrompt.toLowerCase().includes('create')){
+      aiMsg.innerHTML += `<br><br><button class="icon-btn" onclick="generateAIImage('${prompt.replace(/'/g,"\\'")}')">🎨 Iska AI Image Banao</button>`;
+      aiMsg.querySelector('button').onclick = ()=> generateAIImage(prompt);
+    }
+
+  }catch(err){
+    aiMsg.textContent = 'Hi! Main AI MIND PRO hu — bolo kya help chahiye?';
+  }finally{
+    sendBtn.disabled = false;
+    saveHistory();
+    userInput.focus();
+  }
+}
+
+sendBtn.addEventListener('click', (e)=>{ e.preventDefault(); askAI(); });
+userInput.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.isComposing) { e.preventDefault(); askAI(); } });
+
+// Expose for inline button
+window.generateAIImage = generateAIImage; window.askAI = askAI;
+</script>
+<script>
+// Mobile-safe final binding pass. Main logic stays the same; this reattaches the primary controls.
+(function(){
+  try {
+    var byId=function(id){return document.getElementById(id)};
+    var premium=byId('premiumBtn'), theme=byId('themeBtn'), recent=byId('recentBtn'), clear=byId('clearBtn'), close=byId('closePremium'), send=byId('sendBtn');
+    if(premium && typeof window.refreshPremiumState==='function') premium.onclick=function(){window.refreshPremiumState(); byId('premiumPanel').classList.add('show'); if(window.updateActivePremiumBox)window.updateActivePremiumBox();};
+    if(theme) theme.onclick=function(){document.body.classList.toggle('light');var light=document.body.classList.contains('light');try{localStorage.setItem('ai_mind_theme_v3',light?'light':'dark')}catch(e){};theme.textContent=light?'🌙 Dark':'☀️ Light';};
+    if(recent) recent.onclick=function(){var wrap=document.querySelector('.recent-wrap');if(wrap){var opened=wrap.classList.toggle('show');recent.setAttribute('aria-expanded',String(opened));if(opened&&window.renderRecentChats)window.renderRecentChats();}};
+    if(clear && typeof window.startNewChat==='function') clear.onclick=function(){window.startNewChat();};
+    if(close && typeof window.closePremiumPanel==='function') close.onclick=function(){window.closePremiumPanel();};
+    // Keep the original Send click listener to avoid sending a message twice.
+  } catch(e) {
+    var msg=document.createElement('div');msg.style.cssText='position:fixed;bottom:8px;left:8px;right:8px;z-index:2147483647;background:#7f1d1d;color:#fff;padding:12px;border-radius:10px;font:13px sans-serif';msg.textContent='AI MIND PRO binding error: '+(e.message||e);document.body.appendChild(msg);
+  }
+})();
+</script>
+
+
+
+
+<script>
+(function(){
+ const $=id=>document.getElementById(id), sidebar=$('appSidebar'),scrim=$('sidebarScrim');
+ function openSide(){sidebar.classList.add('open');scrim.classList.add('open');$('menuToggle').setAttribute('aria-expanded','true');if(window.renderRecentChats)window.renderRecentChats();}
+ function closeSide(){sidebar.classList.remove('open');scrim.classList.remove('open');$('menuToggle').setAttribute('aria-expanded','false');}
+ $('menuToggle').addEventListener('click',openSide);$('closeSidebar').addEventListener('click',closeSide);scrim.addEventListener('click',closeSide);
+ $('sideNewChat').addEventListener('click',()=>{if(window.startNewChat)window.startNewChat();closeSide();});
+ const topNewChat=$('topNewChat');if(topNewChat)topNewChat.addEventListener('click',()=>{if(window.startNewChat)window.startNewChat();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSide();});
+ let sx=0,sy=0;document.addEventListener('touchstart',e=>{if(!e.touches.length)return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+ document.addEventListener('touchend',e=>{if(!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dy)>Math.abs(dx)||Math.abs(dx)<65)return;if(sx<35&&dx>0)openSide();else if(sidebar.classList.contains('open')&&dx<0)closeSide();},{passive:true});
+ // Name-based guest profile. Authentication is a local browser session, not a verified online account.
+ const LOGIN_NAME_KEY='aimind_guest_name_v2', LOGIN_ID_KEY='aimind_guest_id_v1', LOGIN_SESSION_KEY='aimind_guest_session_v2';
+ const loginGate=$('loginGate'), nameStep=$('guestNameStep'), nameInput=$('guestNameInput');
+ function showSignedInProfile(){
+   const nm=safeGet(LOGIN_NAME_KEY)||'Guest';let gid=safeGet(LOGIN_ID_KEY);
+   if(!gid){gid='GUEST-'+Math.random().toString(36).slice(2,7).toUpperCase();safeSet(LOGIN_ID_KEY,gid)}
+   $('profileInitial').textContent=(nm.trim()[0]||'G').toUpperCase();$('profileName').textContent=nm;$('sideGuestId').textContent=nm+' · '+gid;$('guestBadge').textContent=nm;
+   document.body.classList.remove('auth-locked');loginGate.classList.add('hidden');
+ }
+ function showLoginGate(){document.body.classList.add('auth-locked');loginGate.classList.remove('hidden');nameStep.classList.remove('show');$('guestLoginStart').style.display='block';nameInput.value='';}
+ $('guestLoginStart').addEventListener('click',()=>{$('guestLoginStart').style.display='none';nameStep.classList.add('show');nameInput.focus()});
+ $('guestLoginContinue').addEventListener('click',()=>{const nm=nameInput.value.trim().replace(/\s+/g,' ');if(nm.length<2){$('guestLoginError').textContent='Please enter a name with at least 2 characters.';return;}safeSet(LOGIN_NAME_KEY,nm);safeSet(LOGIN_SESSION_KEY,'active');safeRemove(LOGIN_ID_KEY);showSignedInProfile();});
+ nameInput.addEventListener('keydown',e=>{if(e.key==='Enter')$('guestLoginContinue').click()});
+ $('profileAvatar').addEventListener('click',e=>{e.stopPropagation();$('profileMenu').classList.toggle('open')});
+ document.addEventListener('click',e=>{if(!$('profileWrap').contains(e.target))$('profileMenu').classList.remove('open')});
+ $('logoutBtn').addEventListener('click',()=>{safeRemove(LOGIN_SESSION_KEY);$('profileMenu').classList.remove('open');showLoginGate()});
+ if(safeGet(LOGIN_SESSION_KEY)==='active' && safeGet(LOGIN_NAME_KEY)){showSignedInProfile()}else{showLoginGate()}
+ // Theme defaults to dark and remembers the last selection.
+ const savedTheme=safeGet('ai_mind_theme_v3')||safeGet('ai_mind_theme_v2');if(savedTheme==='light')document.body.classList.add('light');$('themeBtn').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
+ // Smart greeting and dashboard shortcuts (all existing AI handlers are reused).
+ const greeting=$('smartGreeting');if(greeting){const hr=new Date().getHours();const label=hr<12?'Good morning':hr<17?'Good afternoon':hr<21?'Good evening':'Good night';const nm=safeGet(LOGIN_NAME_KEY)||'there';greeting.innerHTML=label+', <span></span>';greeting.querySelector('span').textContent=nm.split(' ')[0];}
+ $('dashChat')?.addEventListener('click',()=>$('userInput').focus());
+ $('dashVoice')?.addEventListener('click',()=>$('voiceBtn').click());
+ $('dashImage')?.addEventListener('click',()=>{const gen=document.querySelector('.attach-item[data-type="gen"]');if(gen)gen.click();else{$('userInput').value='image: ';$('userInput').focus();}});
+ // Speech recognition: tap once to listen, tap again to stop. Recognized text is sent through the existing AI chat.
+ const voice=$('voiceBtn');let recognition=null,listening=false;
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(SR){recognition=new SR();recognition.lang='hi-IN';recognition.interimResults=false;recognition.maxAlternatives=1;
+   recognition.onstart=()=>{listening=true;voice.classList.add('listening');voice.textContent='🔴';voice.title='Listening — tap to stop';};
+   recognition.onend=()=>{listening=false;voice.classList.remove('listening');voice.textContent='🎙️';voice.title='Voice Conversation';};
+   recognition.onerror=e=>{voice.title='Voice input error: '+e.error;};
+   recognition.onresult=e=>{const heard=e.results[0][0].transcript; $('userInput').value=heard; $('userInput').focus();window.__aimindSpeakReply=true;if(typeof window.askAI==='function')window.askAI();};
+ }
+ voice.addEventListener('click',()=>{if(!recognition){alert('Voice input is not supported in this browser. Try Chrome and allow microphone access.');return;}try{if(listening)recognition.stop();else recognition.start();}catch(e){voice.title='Please try again';}});
+ // Speak the AI reply only when the user started the turn with voice.
+ window.__aimindSpeak=function(text){if(!window.__aimindSpeakReply||!('speechSynthesis'in window))return;window.__aimindSpeakReply=false;const u=new SpeechSynthesisUtterance(text);u.lang=/[ऀ-ॿ]/.test(text)?'hi-IN':'en-IN';speechSynthesis.cancel();speechSynthesis.speak(u);};
+})();
+</script>
+
+
+<style>
+#googleModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)}
+#googleModal.open{display:flex !important}
+#googleModalBox{background:#1e1e2e;border:1px solid #333;border-radius:20px;padding:24px;width:100%;max-width:380px;max-height:85vh;overflow:auto}
+#googleModalBox h3{color:#fff;font-size:18px;font-weight:800;margin:0 0 4px}
+#googleModalBox p{color:#888;font-size:12px;margin:0 0 16px}
+.gItem{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #333;border-radius:12px;margin-bottom:10px;cursor:pointer;background:#2a2a3a;color:#fff}
+.gItem:hover{border-color:#8b5cf6}
+.gAdd{width:100%;padding:12px;border:1px dashed #555;border-radius:12px;background:transparent;color:#aaa;cursor:pointer;font-weight:700;margin-top:6px}
+#googleBtnCustom{background:#fff;color:#000;border:none;border-radius:12px;padding:13px;width:100%;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
+#addForm{display:none;margin-top:12px;padding:12px;background:#2a2a3a;border-radius:12px;border:1px solid #333}
+#addForm input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#1e1e2e;color:#fff;margin-bottom:8px;outline:none}
+#addForm button{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:700;margin-right:6px}
+.btnSave{background:#8b5cf6;color:#fff}
+.btnCancel{background:#333;color:#aaa}
+</style>
+<div id="googleModal">
+  <div id="googleModalBox">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div><h3>Choose an account</h3><p>Aapke Google accounts</p></div>
+      <button onclick="closeGoogleModal()" style="width:30px;height:30px;border-radius:50%;border:1px solid #333;background:#2a2a3a;color:#fff;cursor:pointer">×</button>
+    </div>
+    <div id="googleList"></div>
+    <button class="gAdd" onclick="showAddForm()">+ Add Gmail account</button>
+    <div id="addForm">
+      <input id="newEmail" placeholder="Gmail (jaise shahil@gmail.com)" type="email"/>
+      <input id="newName" placeholder="Naam (jaise Shahil)" type="text"/>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="btnSave" onclick="saveNewGmail()">Save</button>
+        <button class="btnCancel" onclick="hideAddForm()">Cancel</button>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#666;margin-top:14px;text-align:center">🔒 Data per ID alag, local only</div>
+  </div>
+</div>
+<script>
+function openGoogleModal(){ var m=document.getElementById('googleModal'); if(!m)return; renderGoogleAccounts(); m.style.display='flex'; m.classList.add('open'); }
+function closeGoogleModal(){ var m=document.getElementById('googleModal'); if(m){ m.style.display='none'; m.classList.remove('open'); } }
+function getGmailAccounts(){ try{return JSON.parse(localStorage.getItem('aimind_gmail_accounts')||'[]');}catch(e){return [];} }
+function saveGmailAccounts(a){ localStorage.setItem('aimind_gmail_accounts', JSON.stringify(a)); }
+function renderGoogleAccounts(){
+  var list=document.getElementById('googleList'); var accs=getGmailAccounts();
+  if(!accs.length){ list.innerHTML='<div style="padding:12px;text-align:center;color:#888;font-size:13px">Pehli baar + Add se Gmail add karo</div>'; return; }
+  var h=''; for(var i=0;i<accs.length;i++){ var a=accs[i]; h+='<div class="gItem" onclick="selectGmail(\''+a.id+'\')"><img src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" style="width:40px;height:40px;border-radius:50%"/><div style="flex:1"><b>'+(a.name||a.email)+'</b><br><small style="color:#888">'+a.email+'</small></div><span>›</span></div>'; }
+  list.innerHTML=h;
+}
+function showAddForm(){ document.getElementById('addForm').style.display='block'; }
+function hideAddForm(){ document.getElementById('addForm').style.display='none'; document.getElementById('newEmail').value=''; document.getElementById('newName').value=''; }
+function saveNewGmail(){
+  var email=document.getElementById('newEmail').value.trim();
+  var name=document.getElementById('newName').value.trim();
+  if(!email||email.indexOf('@')==-1){ alert('Sahi Gmail likho!'); return; }
+  if(!name) name=email.split('@')[0];
+  var id='gm_'+Date.now();
+  var accs=getGmailAccounts(); accs.push({id:id,email:email,name:name,pic:''}); saveGmailAccounts(accs); hideAddForm(); renderGoogleAccounts();
+}
+function selectGmail(id){
+  var accs=getGmailAccounts(); var acc=null; for(var i=0;i<accs.length;i++){ if(accs[i].id==id){ acc=accs[i]; break; } }
+  if(!acc)return;
+  localStorage.setItem('aimind_current_uid', acc.id);
+  localStorage.setItem('aimind_guest_name_v2', acc.name);
+  localStorage.setItem('aimind_guest_id_v1', 'GOOGLE-'+acc.id.slice(-4).toUpperCase());
+  localStorage.setItem('aimind_guest_session_v2', 'active');
+  closeGoogleModal(); location.reload();
+}
+</script>
+
+</body>
+</html>
